@@ -1,8 +1,8 @@
 import React from 'react';
 
-const Recipe = ({recipe}) => {
+const Recipe = ({ recipe }) => {
   return (
-    <div style={{border: 'solid 1px', padding: 5, margin: 5}}>
+    <div style={{ border: 'solid 1px', padding: 5, margin: 5 }}>
       <h3>{recipe.title}</h3>
       Ainekset:
       <ul>
@@ -11,7 +11,7 @@ const Recipe = ({recipe}) => {
       Ohjeet:
       <p>{recipe.instructions}</p>
     </div>
-  )
-}
+  );
+};
 
 export default Recipe;
