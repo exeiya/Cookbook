@@ -21,6 +21,6 @@ const recipes = [
     ingredients: ['jauheliha', 'kastike'],
     instructions: 'Ohjeet jauhelihakastikkeen tekemiseen'
   }
-]
+];
 
 ReactDOM.render(<App recipes={recipes} />, document.getElementById('root'));

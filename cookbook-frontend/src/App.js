@@ -16,14 +16,15 @@ function App(props) {
       title,
       ingredients,
       instructions
-    }
+    };
+
     if (title && instructions && ingredients.length > 0) {
       setRecipes(recipes.concat(newRecipe));
       setTitle('');
       setIngredients([]);
-      setInstructions(''); 
+      setInstructions('');
     }
-  }
+  };
 
   const addIngredient = (event) => {
     event.preventDefault();
@@ -31,11 +32,11 @@ function App(props) {
       setIngredients(ingredients.concat(newIngredient));
       setNewIngredient('');
     }
-  }
+  };
 
   const recipeItems = () => recipes.map(recipe =>
-      <Recipe key={recipe.id} recipe={recipe} />
-    );
+    <Recipe key={recipe.id} recipe={recipe} />
+  );
 
   return (
     <div>
