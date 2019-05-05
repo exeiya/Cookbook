@@ -6,19 +6,19 @@ const recipes = [
   {
     id: 1,
     title: 'Mustikkapiirakka',
-    ingredients: ['mustikka', 'piirakka'],
+    ingredients: [{ name: 'mustikka' }, { name: 'piirakka' }],
     instructions: 'Tässä ohjeet mustikkapiirakan tekemiseen'
   },
   {
     id: 2,
     title: 'Makaroonilaatikko',
-    ingredients: ['makarooni', 'jauheliha'],
+    ingredients: [{ name: 'makarooni' }, { name: 'jauheliha' }],
     instructions: 'Ohjeet makaroonilaatikon tekemiseen'
   },
   {
     id: 3,
     title: 'Jauhelihakastike',
-    ingredients: ['jauheliha', 'kastike'],
+    ingredients: [{ name: 'jauheliha' }, { name: 'kastike' }],
     instructions: 'Ohjeet jauhelihakastikkeen tekemiseen'
   }
 ];

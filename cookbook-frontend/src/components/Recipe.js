@@ -6,7 +6,7 @@ const Recipe = ({ recipe }) => {
       <h3>{recipe.title}</h3>
       Ainekset:
       <ul>
-        {recipe.ingredients.map(ingredient => <li key={ingredient}>{ingredient}</li>)}
+        {recipe.ingredients.map(ingredient => <li key={ingredient.name}>{ingredient.name}</li>)}
       </ul>
       Ohjeet:
       <p>{recipe.instructions}</p>
