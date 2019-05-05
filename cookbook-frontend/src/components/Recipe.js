@@ -6,7 +6,12 @@ const Recipe = ({ recipe }) => {
       <h3>{recipe.title}</h3>
       Ainekset:
       <ul>
-        {recipe.ingredients.map(ingredient => <li key={ingredient.name}>{ingredient.name}</li>)}
+        {recipe.ingredients.map(ingredient =>
+          <li key={ingredient.name}>
+            {ingredient.amount ? `${ingredient.amount}, ` : null}
+            {ingredient.name}
+          </li>
+        )}
       </ul>
       Ohjeet:
       <p>{recipe.instructions}</p>

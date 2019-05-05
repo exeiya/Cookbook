@@ -12,11 +12,15 @@ const RecipeForm = ({
 }) => {
 
   const addedIngredients = ingredients.map((ingredient) => {
-    console.log(ingredient);
     return (
-      <li key={ingredient.id}>
-        <input value={ingredient.name} name={ingredient.id} onChange={handleIngredientChange} />
-      </li>
+      <tr key={ingredient.id}>
+        <td>
+          <input value={ingredient.name} name={ingredient.id} onChange={handleIngredientChange('name')} />
+        </td>
+        <td>
+          <input value={ingredient.amount} name={ingredient.id} onChange={handleIngredientChange('amount')} />
+        </td>
+      </tr>
     );
   });
 
@@ -25,10 +29,13 @@ const RecipeForm = ({
       Reseptin nimi:
       <input onChange={handleTitleChange} value={title}/> <br/>
       Ainekset:
-      <ul>
-        {addedIngredients}
-        <button type="button" onClick={addIngredient}>Lisää uusi ainesosa</button>
-      </ul>
+      <table>
+        <tbody>
+          {addedIngredients.length > 0 ? <tr><th>Ainesosa</th><th>Määrä</th></tr> : null}
+          {addedIngredients}
+        </tbody>
+      </table>
+      <button type="button" onClick={addIngredient}>Lisää uusi ainesosa</button><br/>
       Ohjeet:
       <input onChange={handleInstructionsChange} value={instructions}/> <br/>
       <input type="submit" value="Lisää resepti" />

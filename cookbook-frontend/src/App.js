@@ -15,7 +15,7 @@ function App(props) {
     const newRecipe = {
       id: (title.length + instructions.length),
       title,
-      ingredients: ingredients.map(ingredient =>  ({ name: ingredient.name })),
+      ingredients,
       instructions
     };
 
@@ -29,15 +29,14 @@ function App(props) {
 
   const addIngredient = (event) => {
     event.preventDefault();
-    setIngredients(ingredients.concat({ id: newIngredientCounter, name: '' }));
+    setIngredients(ingredients.concat({ id: newIngredientCounter, name: '', amount: '' }));
     newIngredientCounter++;
   };
 
-  const handleIngredientChange = (key, newValue) => {
-    console.log(key, newValue);
+  const handleIngredientChange = (field) => ({ target }) => {
     setIngredients(
-      ingredients.map((ingredient) => ingredient.id === Number(key)
-        ? { ...ingredient, name: newValue }
+      ingredients.map((ingredient) => ingredient.id === Number(target.name)
+        ? { ...ingredient, [field]: target.value }
         : ingredient
       )
     );
@@ -58,7 +57,7 @@ function App(props) {
         addIngredient={addIngredient}
         handleTitleChange={({ target }) => setTitle(target.value)}
         handleInstructionsChange={({ target }) => setInstructions(target.value)}
-        handleIngredientChange={({ target }) => handleIngredientChange(target.name, target.value)}
+        handleIngredientChange={handleIngredientChange}
       />
       {recipeItems()}
     </div>
