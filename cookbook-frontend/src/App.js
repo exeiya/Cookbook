@@ -22,14 +22,16 @@ function App(props) {
   const addRecipe = (event) => {
     event.preventDefault();
     const newRecipe = {
-      id: shortid.generate(),
       title,
-      ingredients,
+      ingredients: ingredients.map(ingredient =>
+        ({ name: ingredient.name, amount: ingredient.amount })),
       instructions
     };
 
     if (title && instructions && ingredients.length > 0) {
-      props.addRecipe(newRecipe);
+      recipeService
+        .create(newRecipe)
+        .then(data => props.addRecipe(data));
       setTitle('');
       setIngredients([]);
       setInstructions('');
