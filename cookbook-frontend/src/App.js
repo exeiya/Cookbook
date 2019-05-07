@@ -46,6 +46,10 @@ function App(props) {
     <Recipe key={recipe.id} recipe={recipe} />
   );
 
+  const removeIngredient = (id) => () => {
+    setIngredients(ingredients.filter(ingredient => ingredient.id !== id));
+  };
+
   return (
     <div>
       <h1>Cookbook</h1>
@@ -58,6 +62,7 @@ function App(props) {
         handleTitleChange={({ target }) => setTitle(target.value)}
         handleInstructionsChange={({ target }) => setInstructions(target.value)}
         handleIngredientChange={handleIngredientChange}
+        removeIngredient={removeIngredient}
       />
       {recipeItems()}
     </div>

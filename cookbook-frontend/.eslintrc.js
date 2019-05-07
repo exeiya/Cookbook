@@ -24,6 +24,7 @@ module.exports = {
       "no-trailing-spaces": "error",
       "object-curly-spacing": ["error", "always"],
       "quotes": ["error","single"],
+      "jsx-quotes": ["error", "prefer-double"],
       "semi": ["error","always"],
       "arrow-spacing": [
           "error", { "before": true, "after": true }

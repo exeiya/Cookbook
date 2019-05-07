@@ -8,7 +8,8 @@ const RecipeForm = ({
   handleTitleChange,
   handleInstructionsChange,
   handleIngredientChange,
-  addIngredient
+  addIngredient,
+  removeIngredient
 }) => {
 
   const addedIngredients = ingredients.map((ingredient) => {
@@ -19,6 +20,9 @@ const RecipeForm = ({
         </td>
         <td>
           <input value={ingredient.amount} name={ingredient.id} onChange={handleIngredientChange('amount')} />
+        </td>
+        <td>
+          <input type="button" value="Poista" onClick={removeIngredient(ingredient.id)} />
         </td>
       </tr>
     );
@@ -35,9 +39,9 @@ const RecipeForm = ({
           {addedIngredients}
         </tbody>
       </table>
-      <button type="button" onClick={addIngredient}>Lisää uusi ainesosa</button><br/>
+      <input type="button" onClick={addIngredient} value="Lisää uusi ainesosa" /><br/>
       Ohjeet:
-      <input onChange={handleInstructionsChange} value={instructions}/> <br/>
+      <textarea onChange={handleInstructionsChange} value={instructions}/> <br/>
       <input type="submit" value="Lisää resepti" />
     </form>
   );
