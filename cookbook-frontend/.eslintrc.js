@@ -19,7 +19,7 @@ module.exports = {
   ],
   "rules": {
       "eqeqeq": "error",
-      "indent": ["error", 2],
+      "indent": ["error", 2, {"SwitchCase": 1}],
       "linebreak-style": ["error", "unix"],
       "no-trailing-spaces": "error",
       "object-curly-spacing": ["error", "always"],

@@ -1,20 +1,23 @@
 import React, { useState, useEffect } from 'react';
+import { connect } from 'react-redux';
 import shortid from 'shortid';
-import axios from 'axios';
 import Recipe from './components/Recipe';
 import RecipeForm from './components/RecipeForm';
+import recipeService from './services/recipes';
+import { initializeRecipes, addRecipe } from './reducers/recipeReducer';
 
-function App() {
-  const [recipes, setRecipes] = useState([]);
+function App(props) {
   const [title, setTitle] = useState('');
   const [ingredients, setIngredients] = useState([]);
   const [instructions, setInstructions] = useState('');
 
+  const { initializeRecipes, } = props;
+
   useEffect(() => {
-    axios
-      .get('http://localhost:3001/recipes')
-      .then(response => setRecipes(response.data));
-  }, []);
+    recipeService
+      .getAll()
+      .then(data => initializeRecipes(data));
+  }, [initializeRecipes]);
 
   const addRecipe = (event) => {
     event.preventDefault();
@@ -26,7 +29,7 @@ function App() {
     };
 
     if (title && instructions && ingredients.length > 0) {
-      setRecipes(recipes.concat(newRecipe));
+      props.addRecipe(newRecipe);
       setTitle('');
       setIngredients([]);
       setInstructions('');
@@ -52,7 +55,7 @@ function App() {
     );
   };
 
-  const recipeItems = () => recipes.map(recipe =>
+  const recipeItems = () => props.state.map(recipe =>
     <Recipe key={recipe.id} recipe={recipe} />
   );
 
@@ -79,4 +82,13 @@ function App() {
   );
 }
 
-export default App;
+const mapStateToProps = (state) => {
+  return {
+    state
+  };
+};
+
+export default connect(
+  mapStateToProps,
+  { initializeRecipes, addRecipe }
+)(App);
