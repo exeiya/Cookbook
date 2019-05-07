@@ -1,8 +1,7 @@
 import React, { useState } from 'react';
+import shortid from 'shortid';
 import Recipe from './components/Recipe';
 import RecipeForm from './components/RecipeForm';
-
-let newIngredientCounter = 0;
 
 function App(props) {
   const [recipes, setRecipes] = useState(props.recipes);
@@ -13,7 +12,7 @@ function App(props) {
   const addRecipe = (event) => {
     event.preventDefault();
     const newRecipe = {
-      id: (title.length + instructions.length),
+      id: shortid.generate(),
       title,
       ingredients,
       instructions
@@ -29,13 +28,17 @@ function App(props) {
 
   const addIngredient = (event) => {
     event.preventDefault();
-    setIngredients(ingredients.concat({ id: newIngredientCounter, name: '', amount: '' }));
-    newIngredientCounter++;
+    setIngredients(ingredients.concat({
+      id: shortid.generate(),
+      name: '',
+      amount: ''
+    })
+    );
   };
 
   const handleIngredientChange = (field) => ({ target }) => {
     setIngredients(
-      ingredients.map((ingredient) => ingredient.id === Number(target.name)
+      ingredients.map((ingredient) => ingredient.id === target.name
         ? { ...ingredient, [field]: target.value }
         : ingredient
       )
