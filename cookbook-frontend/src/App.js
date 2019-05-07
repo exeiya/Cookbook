@@ -1,13 +1,20 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import shortid from 'shortid';
+import axios from 'axios';
 import Recipe from './components/Recipe';
 import RecipeForm from './components/RecipeForm';
 
-function App(props) {
-  const [recipes, setRecipes] = useState(props.recipes);
+function App() {
+  const [recipes, setRecipes] = useState([]);
   const [title, setTitle] = useState('');
   const [ingredients, setIngredients] = useState([]);
   const [instructions, setInstructions] = useState('');
+
+  useEffect(() => {
+    axios
+      .get('http://localhost:3001/recipes')
+      .then(response => setRecipes(response.data));
+  }, []);
 
   const addRecipe = (event) => {
     event.preventDefault();
