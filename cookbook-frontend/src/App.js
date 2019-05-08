@@ -3,7 +3,6 @@ import { connect } from 'react-redux';
 import shortid from 'shortid';
 import Recipe from './components/Recipe';
 import RecipeForm from './components/RecipeForm';
-import recipeService from './services/recipes';
 import { initializeRecipes, addRecipe } from './reducers/recipeReducer';
 
 function App(props) {
@@ -11,12 +10,10 @@ function App(props) {
   const [ingredients, setIngredients] = useState([]);
   const [instructions, setInstructions] = useState('');
 
-  const { initializeRecipes, } = props;
+  const { initializeRecipes } = props;
 
   useEffect(() => {
-    recipeService
-      .getAll()
-      .then(data => initializeRecipes(data));
+    initializeRecipes();
   }, [initializeRecipes]);
 
   const addRecipe = (event) => {
@@ -29,9 +26,7 @@ function App(props) {
     };
 
     if (title && instructions && ingredients.length > 0) {
-      recipeService
-        .create(newRecipe)
-        .then(data => props.addRecipe(data));
+      props.addRecipe(newRecipe);
       setTitle('');
       setIngredients([]);
       setInstructions('');

@@ -1,3 +1,5 @@
+import recipeService from '../services/recipes';
+
 const recipeReducer = (state = [], action) => {
   switch (action.type) {
     case 'INIT_RECIPES':
@@ -9,17 +11,23 @@ const recipeReducer = (state = [], action) => {
   }
 };
 
-export const initializeRecipes = (data) => {
-  return {
-    type: 'INIT_RECIPES',
-    data
+export const initializeRecipes = () => {
+  return async dispatch => {
+    const recipes = await recipeService.getAll();
+    dispatch({
+      type: 'INIT_RECIPES',
+      data: recipes
+    });
   };
 };
 
-export const addRecipe = (data) => {
-  return {
-    type: 'ADD_RECIPE',
-    data
+export const addRecipe = (recipe) => {
+  return async dispatch => {
+    const newRecipe = await recipeService.create(recipe);
+    dispatch({
+      type: 'ADD_RECIPE',
+      data: newRecipe
+    });
   };
 };
 
