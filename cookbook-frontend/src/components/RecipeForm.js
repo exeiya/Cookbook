@@ -1,16 +1,52 @@
-import React from 'react';
+import React, { useState } from 'react';
+import { connect } from 'react-redux';
+import shortid from 'shortid';
+import { addRecipe } from '../reducers/recipeReducer';
 
-const RecipeForm = ({
-  title,
-  ingredients,
-  instructions,
-  addRecipe,
-  handleTitleChange,
-  handleInstructionsChange,
-  handleIngredientChange,
-  addIngredient,
-  removeIngredient
-}) => {
+const RecipeForm = (props) => {
+  const [title, setTitle] = useState('');
+  const [ingredients, setIngredients] = useState([]);
+  const [instructions, setInstructions] = useState('');
+
+  const addRecipe = (event) => {
+    event.preventDefault();
+    const newRecipe = {
+      title,
+      ingredients: ingredients.map(ingredient =>
+        ({ name: ingredient.name, amount: ingredient.amount })),
+      instructions
+    };
+
+    if (title && instructions && ingredients.length > 0) {
+      props.addRecipe(newRecipe);
+      setTitle('');
+      setIngredients([]);
+      setInstructions('');
+    }
+  };
+
+  const addIngredient = (event) => {
+    event.preventDefault();
+    setIngredients(ingredients.concat({
+      id: shortid.generate(),
+      name: '',
+      amount: ''
+    })
+    );
+  };
+
+  const handleIngredientChange = (field) => ({ target }) => {
+    setIngredients(
+      ingredients.map((ingredient) => ingredient.id === target.name
+        ? { ...ingredient, [field]: target.value }
+        : ingredient
+      )
+    );
+  };
+
+  const removeIngredient = (id) => () => {
+    setIngredients(ingredients.filter(ingredient => ingredient.id !== id));
+  };
 
   const addedIngredients = ingredients.map((ingredient) => {
     return (
@@ -31,7 +67,7 @@ const RecipeForm = ({
   return (
     <form onSubmit={addRecipe}>
       Reseptin nimi:
-      <input onChange={handleTitleChange} value={title}/> <br/>
+      <input onChange={({ target }) => setTitle(target.value)} value={title}/> <br/>
       Ainekset:
       <table>
         <tbody>
@@ -41,10 +77,13 @@ const RecipeForm = ({
       </table>
       <input type="button" onClick={addIngredient} value="Lisää uusi ainesosa" /><br/>
       Ohjeet:
-      <textarea onChange={handleInstructionsChange} value={instructions}/> <br/>
+      <textarea onChange={({ target }) => setInstructions(target.value)} value={instructions}/> <br/>
       <input type="submit" value="Lisää resepti" />
     </form>
   );
 };
 
-export default RecipeForm;
+export default connect(
+  null,
+  { addRecipe }
+)(RecipeForm);
