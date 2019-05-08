@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { connect } from 'react-redux';
 import shortid from 'shortid';
+import { Form, Button } from 'semantic-ui-react';
 import { addRecipe } from '../reducers/recipeReducer';
 
 const RecipeForm = (props) => {
@@ -58,28 +59,33 @@ const RecipeForm = (props) => {
           <input value={ingredient.amount} name={ingredient.id} onChange={handleIngredientChange('amount')} />
         </td>
         <td>
-          <input type="button" value="Poista" onClick={removeIngredient(ingredient.id)} />
+          <Button type="button" onClick={removeIngredient(ingredient.id)}>Poista</Button>
         </td>
       </tr>
     );
   });
 
   return (
-    <form onSubmit={addRecipe}>
-      Reseptin nimi:
-      <input onChange={({ target }) => setTitle(target.value)} value={title}/> <br/>
-      Ainekset:
-      <table>
-        <tbody>
-          {addedIngredients.length > 0 ? <tr><th>Ainesosa</th><th>Määrä</th></tr> : null}
-          {addedIngredients}
-        </tbody>
-      </table>
-      <input type="button" onClick={addIngredient} value="Lisää uusi ainesosa" /><br/>
-      Ohjeet:
-      <textarea onChange={({ target }) => setInstructions(target.value)} value={instructions}/> <br/>
-      <input type="submit" value="Lisää resepti" />
-    </form>
+    <Form onSubmit={addRecipe}>
+      <Form.Field width={8}>
+        <label>Reseptin nimi</label>
+        <input onChange={({ target }) => setTitle(target.value)} value={title} />
+      </Form.Field>
+      <Form.Group grouped>
+        <table>
+          <tbody>
+            {addedIngredients.length > 0 ? <tr><th>Ainesosa</th><th>Määrä</th></tr> : null}
+            {addedIngredients}
+          </tbody>
+        </table>
+        <Button type="button" onClick={addIngredient}>Lisää uusi ainesosa</Button>
+      </Form.Group>
+      <Form.Field>
+        <label>Ohjeet</label>
+        <textarea onChange={({ target }) => setInstructions(target.value)} value={instructions}/>
+      </Form.Field>
+      <Button positive>Lisää resepti</Button>
+    </Form>
   );
 };
 

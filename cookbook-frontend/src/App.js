@@ -1,5 +1,8 @@
 import React, { useEffect } from 'react';
 import { connect } from 'react-redux';
+
+import { Container } from 'semantic-ui-react';
+
 import RecipeForm from './components/RecipeForm';
 import RecipeList from './components/RecipeList';
 import { initializeRecipes } from './reducers/recipeReducer';
@@ -12,11 +15,11 @@ function App(props) {
   }, [initializeRecipes]);
 
   return (
-    <div>
+    <Container>
       <h1>Cookbook</h1>
       <RecipeForm />
       <RecipeList />
-    </div>
+    </Container>
   );
 }
 
