@@ -1,7 +1,8 @@
 import React, { useEffect } from 'react';
 import { connect } from 'react-redux';
+import { BrowserRouter as Router, Route, Link } from 'react-router-dom';
 
-import { Container } from 'semantic-ui-react';
+import { Container, Menu } from 'semantic-ui-react';
 
 import RecipeForm from './components/RecipeForm';
 import RecipeList from './components/RecipeList';
@@ -16,9 +17,15 @@ function App(props) {
 
   return (
     <Container>
-      <h1>Cookbook</h1>
-      <RecipeForm />
-      <RecipeList />
+      <Router>
+        <h1>Cookbook</h1>
+        <Menu>
+          <Menu.Item as={Link} to="/" name="Etusivu" />
+          <Menu.Item as={Link} to="/createNewRecipe" name="Uusi resepti" />
+        </Menu>
+        <Route exact path="/" render={() => <RecipeList />} />
+        <Route path="/createNewRecipe" render={() => <RecipeForm />} />
+      </Router>
     </Container>
   );
 }
