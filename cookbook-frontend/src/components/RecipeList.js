@@ -1,17 +1,25 @@
 import React from 'react';
 import { connect } from 'react-redux';
-import Recipe from './Recipe';
+import { Card, Grid, } from 'semantic-ui-react';
+import { Link } from 'react-router-dom';
+import picture from '../assets/default_picture.jpg';
 
 const RecipeList = ({ recipes }) => {
 
   const recipeList = recipes.map(recipe =>
-    <Recipe key={recipe.id} recipe={recipe} />
+    <Grid.Column key={recipe.id}>
+      <Card as={Link} to={`/recipes/${recipe.id}`} color="teal" image={picture} header={recipe.title}/>
+    </Grid.Column>
   );
 
   return (
-    <>
-    {recipeList}
-    </>
+    <Grid centered columns={3}>
+      <Grid.Column />
+      <Grid.Column width={14}>
+        <Grid stackable doubling columns={3}>{recipeList}</Grid>
+      </Grid.Column>
+      <Grid.Column />
+    </Grid>
   );
 };
 

@@ -6,6 +6,7 @@ import { Container, Menu } from 'semantic-ui-react';
 
 import RecipeForm from './components/RecipeForm';
 import RecipeList from './components/RecipeList';
+import Recipe from './components/Recipe';
 import { initializeRecipes } from './reducers/recipeReducer';
 
 function App(props) {
@@ -14,6 +15,10 @@ function App(props) {
   useEffect(() => {
     initializeRecipes();
   }, [initializeRecipes]);
+
+  const recipeById = (id) => {
+    return props.recipes.find(recipe => recipe.id === Number(id));
+  };
 
   return (
     <Container>
@@ -25,12 +30,19 @@ function App(props) {
         </Menu>
         <Route exact path="/" render={() => <RecipeList />} />
         <Route path="/createNewRecipe" render={() => <RecipeForm />} />
+        <Route exact path="/recipes/:id" render={({ match }) => <Recipe recipe={recipeById(match.params.id)}/>} />
       </Router>
     </Container>
   );
 }
 
+const mapStateToProps = (state) => {
+  return {
+    recipes: state
+  };
+};
+
 export default connect(
-  null,
+  mapStateToProps,
   { initializeRecipes }
 )(App);

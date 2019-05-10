@@ -2,6 +2,8 @@ import React from 'react';
 import { Table } from 'semantic-ui-react';
 
 const Recipe = ({ recipe }) => {
+  if (!recipe) return null;
+
   return (
     <div style={{ border: 'solid 1px', padding: 5, margin: 5 }}>
       <h3>{recipe.title}</h3>

@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { connect } from 'react-redux';
 import shortid from 'shortid';
+import { withRouter } from 'react-router-dom';
 import { Form, Button } from 'semantic-ui-react';
 import { addRecipe } from '../reducers/recipeReducer';
 
@@ -23,6 +24,7 @@ const RecipeForm = (props) => {
       setTitle('');
       setIngredients([]);
       setInstructions('');
+      props.history.push('/');
     }
   };
 
@@ -92,4 +94,4 @@ const RecipeForm = (props) => {
 export default connect(
   null,
   { addRecipe }
-)(RecipeForm);
+)(withRouter(RecipeForm));
