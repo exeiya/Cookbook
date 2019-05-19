@@ -25,7 +25,7 @@ const RecipeList = ({ recipes }) => {
 
 const mapStateToProps = (state) => {
   return {
-    recipes: state
+    recipes: state.recipes
   };
 };
 

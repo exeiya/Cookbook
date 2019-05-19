@@ -4,13 +4,14 @@ import shortid from 'shortid';
 import { withRouter } from 'react-router-dom';
 import { Form, Button } from 'semantic-ui-react';
 import { addRecipe } from '../reducers/recipeReducer';
+import { notify } from '../reducers/notificationReducer';
 
 const RecipeForm = (props) => {
   const [title, setTitle] = useState('');
   const [ingredients, setIngredients] = useState([]);
   const [instructions, setInstructions] = useState('');
 
-  const addRecipe = (event) => {
+  const addRecipe = async (event) => {
     event.preventDefault();
     const newRecipe = {
       title,
@@ -20,11 +21,17 @@ const RecipeForm = (props) => {
     };
 
     if (title && instructions && ingredients.length > 0) {
-      props.addRecipe(newRecipe);
-      setTitle('');
-      setIngredients([]);
-      setInstructions('');
-      props.history.push('/');
+      try {
+        await props.addRecipe(newRecipe);
+        setTitle('');
+        setIngredients([]);
+        setInstructions('');
+        props.notify(`Uusi resepti '${newRecipe.title}' lisätty!`, 'success');
+        props.history.push('/');
+      } catch (e) {
+        console.log(e);
+        props.notify('Virhe reseptin luonnissa! Uutta reseptiä ei luotu.', 'error');
+      }
     }
   };
 
@@ -93,5 +100,5 @@ const RecipeForm = (props) => {
 
 export default connect(
   null,
-  { addRecipe }
+  { addRecipe, notify }
 )(withRouter(RecipeForm));

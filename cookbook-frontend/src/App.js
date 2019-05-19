@@ -7,6 +7,7 @@ import { Container, Menu } from 'semantic-ui-react';
 import RecipeForm from './components/RecipeForm';
 import RecipeList from './components/RecipeList';
 import Recipe from './components/Recipe';
+import Notification from './components/Notification';
 import { initializeRecipes } from './reducers/recipeReducer';
 
 function App(props) {
@@ -28,6 +29,7 @@ function App(props) {
           <Menu.Item as={Link} to="/" name="Etusivu" />
           <Menu.Item as={Link} to="/createNewRecipe" name="Uusi resepti" />
         </Menu>
+        <Notification />
         <Route exact path="/" render={() => <RecipeList />} />
         <Route path="/createNewRecipe" render={() => <RecipeForm />} />
         <Route exact path="/recipes/:id" render={({ match }) => <Recipe recipe={recipeById(match.params.id)}/>} />
@@ -38,7 +40,7 @@ function App(props) {
 
 const mapStateToProps = (state) => {
   return {
-    recipes: state
+    recipes: state.recipes
   };
 };
 
