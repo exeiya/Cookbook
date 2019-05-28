@@ -1,9 +1,7 @@
 import React, { useEffect } from 'react';
 import { connect } from 'react-redux';
 import { BrowserRouter as Router, Route, Link } from 'react-router-dom';
-
 import { Container, Menu } from 'semantic-ui-react';
-
 import RecipeForm from './components/RecipeForm';
 import RecipeList from './components/RecipeList';
 import Recipe from './components/Recipe';
