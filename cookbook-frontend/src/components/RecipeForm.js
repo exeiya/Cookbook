@@ -8,8 +8,12 @@ import { notify } from '../reducers/notificationReducer';
 
 const RecipeForm = (props) => {
   const [values, setValues] = useState({ title: '', instructions: '' });
-  const [ingredients, setIngredients] = useState([]);
-  const [errors, setErrors] = useState({});
+  const [ingredients, setIngredients] = useState([{
+    id: shortid.generate(),
+    name: '',
+    amount: ''
+  }]);
+  const [errors, setErrors] = useState({ ingredientIds: [] });
 
   const validationErrorStyle = {
     color: '#9f2a28',
@@ -19,27 +23,46 @@ const RecipeForm = (props) => {
   const validateFields = () => {
     let fieldErrors = { ...errors };
     if (values.title.length < 3) {
-      fieldErrors = ({ ...fieldErrors,  title: 'Reseptin nimen tulee olla vähintään 3 merkin pituinen' });
-    } else if (fieldErrors.title || fieldErrors.title === null) {
-      delete fieldErrors.title;
+      fieldErrors.title = 'Reseptin nimen tulee olla vähintään 3 merkin pituinen';
     }
 
     if (values.instructions.length === 0) {
-      fieldErrors = ({ ...fieldErrors,  instructions: 'Reseptillä täytyy olla ohje' });
-    } else if (fieldErrors.instructions || fieldErrors.instructions === null) {
-      delete fieldErrors.instructions;
+      fieldErrors.instructions = 'Reseptillä täytyy olla ohje';
     }
 
+    ingredients.forEach(ingredient => {
+      const errorExists = fieldErrors.ingredientIds.includes(ingredient.id);
+      if (ingredient.name.length === 0) {
+        if (!errorExists) fieldErrors.ingredientIds.push(ingredient.id);
+        fieldErrors.ingredients = 'Ainesosilla täytyy olla nimi';
+      } else if (ingredient.name.length > 0 && errorExists) {
+        fieldErrors.ingredientIds = fieldErrors.ingredientIds.filter(value => value !== ingredient.id);
+      }
+    });
+
     setErrors(fieldErrors);
-    return Object.keys(fieldErrors).length === 0;
+    let isValid = true;
+    Object.entries(fieldErrors).forEach(([key, value]) => {
+      if(key === 'ingredientIds') {
+        if (value.length > 0) isValid = false;
+        return;
+      } else if (value) {
+        isValid = false;
+      }
+    });
+
+    return isValid;
   };
 
   const addRecipe = async (event) => {
     event.preventDefault();
     const newRecipe = {
       title: values.title,
-      ingredients: ingredients.map(ingredient =>
-        ({ name: ingredient.name, amount: ingredient.amount })),
+      ingredients: ingredients
+        .filter(ingredient => ingredient.name.length > 0)
+        .map(ingredient => {
+          return ({ name: ingredient.name, amount: ingredient.amount });
+        }),
       instructions: values.instructions
     };
 
@@ -55,6 +78,11 @@ const RecipeForm = (props) => {
         props.notify('Virhe reseptin luonnissa! Uutta reseptiä ei luotu.', 'error');
       }
     }
+  };
+
+  const handleChange = (target) => {
+    setValues({ ...values, [target.name]: target.value });
+    setErrors({ ...errors, [target.name]: null });
   };
 
   const addIngredient = (event) => {
@@ -74,23 +102,34 @@ const RecipeForm = (props) => {
         : ingredient
       )
     );
+    setErrors({ ...errors,
+      ingredientIds: errors.ingredientIds.filter(val => val !== target.name),
+      ingredients: null });
   };
 
   const removeIngredient = (id) => () => {
     setIngredients(ingredients.filter(ingredient => ingredient.id !== id));
+    setErrors({ ...errors,
+      ingredientIds: errors.ingredientIds.filter(val => val !== id),
+      ingredients: null });
   };
 
   const addedIngredients = ingredients.map((ingredient) => {
+    const error = errors.ingredientIds.includes(ingredient.id) && true;
     return (
       <tr key={ingredient.id}>
         <td>
-          <input value={ingredient.name} name={ingredient.id} onChange={handleIngredientChange('name')} />
+          <Form.Field error={error}>
+            <input value={ingredient.name} name={ingredient.id} onChange={handleIngredientChange('name')} />
+          </Form.Field>
         </td>
         <td>
-          <input value={ingredient.amount} name={ingredient.id} onChange={handleIngredientChange('amount')} />
+          <Form.Field error={error}>
+            <input value={ingredient.amount} name={ingredient.id} onChange={handleIngredientChange('amount')} />
+          </Form.Field>
         </td>
         <td>
-          <Button type="button" onClick={removeIngredient(ingredient.id)}>Poista</Button>
+          {ingredients.length > 1 ? <Button color="orange" type="button" onClick={removeIngredient(ingredient.id)}>Poista</Button> : null}
         </td>
       </tr>
     );
@@ -98,15 +137,10 @@ const RecipeForm = (props) => {
 
   const validationErrorMsg = (msg) => (
     <span style={validationErrorStyle}>
-      <Icon name="exclamation triangle" />
+      <Icon color="yellow" name="exclamation triangle" />
       {msg}
     </span>
   );
-
-  const handleChange = (target) => {
-    setValues({ ...values, [target.name]: target.value });
-    setErrors({ ...errors, [target.name]: null });
-  };
 
   return (
     <Form onSubmit={addRecipe} noValidate>
@@ -124,7 +158,8 @@ const RecipeForm = (props) => {
             {addedIngredients}
           </tbody>
         </table>
-        <Button type="button" onClick={addIngredient}>Lisää uusi ainesosa</Button>
+        {errors.ingredients && <div style={{ color: '#9f2a28' }}><Icon color="yellow" name="exclamation triangle" /> {errors.ingredients}</div>}
+        <Button type="button" onClick={addIngredient} color="teal">Lisää uusi ainesosa</Button>
       </Form.Group>
       <Form.Field error={errors.instructions && true}>
         <div>
