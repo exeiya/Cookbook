@@ -1,18 +1,38 @@
 import React from 'react';
-import { Table, Grid, Image } from 'semantic-ui-react';
+import { Table, Grid, Image, Icon, Label } from 'semantic-ui-react';
 import picture from '../assets/default_picture.jpg';
 
 const Recipe = ({ recipe }) => {
   if (!recipe) return null;
 
   return (
-    <Grid centered stackable>
+    <Grid stackable >
       <Grid.Row>
-        <Grid.Column width={12}>
+        <Grid.Column>
           <h3>{recipe.title}</h3>
-          <Image src={picture} size="medium" rounded/>
         </Grid.Column>
       </Grid.Row>
+      <Grid.Row columns={2}>
+        <Grid.Column width={5}>
+          <Image src={picture} size="medium" rounded/>
+        </Grid.Column>
+        <Grid.Column verticalAlign="bottom">
+          <table style={{ paddingTop: '20px', paddingBottom: '20px' }}>
+            <tbody>
+              <tr>
+                <td style={{ paddingRight: '10px' }}><Icon name="clock outline" /> Valmistusaika</td>
+                <td> {recipe.cookingTime ? recipe.cookingTime : '--'}</td>
+              </tr>
+              <tr>
+                <td><Icon name="utensils" /> Annosmäärä</td>
+                <td>{recipe.servings ? recipe.servings : '--' }</td>
+              </tr>
+            </tbody>
+          </table>
+          <Label color={'teal'}>{recipe.category}</Label>
+        </Grid.Column>
+      </Grid.Row>
+
       <Grid.Row>
         <Grid.Column width={4}>
           <Table unstackable>

@@ -3,20 +3,78 @@
     {
       "id": 1,
       "title": "Mustikkapiirakka",
-      "ingredients": [{ "name": "mustikka", "amount": "1 kpl" }, { "name": "piirakka", "amount": "1 kpl" }],
-      "instructions": "Tässä ohjeet mustikkapiirakan tekemiseen"
+      "ingredients": [
+        {
+          "name": "mustikka",
+          "amount": "1 kpl"
+        },
+        {
+          "name": "piirakka",
+          "amount": "1 kpl"
+        }
+      ],
+      "instructions": "Tässä ohjeet mustikkapiirakan tekemiseen",
+      "servings": 8,
+      "cookingTime": "2 tuntia",
+      "category": "jälkiruoka"
     },
     {
       "id": 2,
       "title": "Makaroonilaatikko",
-      "ingredients": [{ "name": "makarooni", "amount": "1" }, { "name": "jauheliha", "amount": "1" }],
-      "instructions": "Ohjeet makaroonilaatikon tekemiseen"
+      "ingredients": [
+        {
+          "name": "makarooni",
+          "amount": "1"
+        },
+        {
+          "name": "jauheliha",
+          "amount": "1"
+        }
+      ],
+      "instructions": "Ohjeet makaroonilaatikon tekemiseen",
+      "servings": 6,
+      "cookingTime": "2 tuntia",
+      "category": "pääruoka"
     },
     {
       "id": 3,
       "title": "Jauhelihakastike",
-      "ingredients": [{ "name": "jauheliha", "amount": "1" }, { "name": "kastike", "amount": "1" }],
-      "instructions": "Ohjeet jauhelihakastikkeen tekemiseen"
+      "ingredients": [
+        {
+          "name": "jauheliha",
+          "amount": "1"
+        },
+        {
+          "name": "kastike",
+          "amount": "1"
+        }
+      ],
+      "instructions": "Ohjeet jauhelihakastikkeen tekemiseen",
+      "servings": 6,
+      "cookingTime": "30 minuuttia",
+      "category": "pääruoka"
+    },
+    {
+      "id": 4,
+      "title": "Salaatti",
+      "ingredients": [
+        {
+          "name": "kurkku",
+          "amount": "1"
+        },
+        {
+          "name": "tomaatti",
+          "amount": "2"
+        },
+        {
+          "name": "salaatti",
+          "amount": "1"
+        }
+      ],
+      "instructions": "Paloittele kaikki ainekset ja sekoita kulhossa",
+      "servings": 6,
+      "cookingTime": "30 minuuttia",
+      "category": "salaatti"
     }
   ]
 }
