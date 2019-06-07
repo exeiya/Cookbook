@@ -50,14 +50,14 @@ app.get('/api/recipes', (req, res) => {
 app.get('/api/recipes/:id', (req, res) => {
   const recipe = recipes
     .find(recipe => recipe.id === Number(req.params.id));
-  
+
   if (recipe) res.json(recipe);
   res.status(404).end();
 });
 
 const validateFields = (recipe) => {
-  const { 
-    title, 
+  const {
+    title,
     instructions,
     category,
     ingredients
@@ -66,13 +66,13 @@ const validateFields = (recipe) => {
   if (!title || !instructions || !category || !ingredients) {
     return ({ error: 'Missing required fields' });
   } else if (!Array.isArray(ingredients) || ingredients.length === 0) {
-    return ({ error: 'Missing ingredients'})
+    return ({ error: 'Missing ingredients' });
   }
 
   let ingredientsError = null;
   ingredients.forEach(ingredient => {
     if (!ingredient.name) {
-      ingredientsError = ({ error: 'Missing ingredient name'});
+      ingredientsError = ({ error: 'Missing ingredient name' });
       return;
     }
   });
@@ -81,8 +81,8 @@ const validateFields = (recipe) => {
 };
 
 app.post('/api/recipes', (req, res) => {
-  const { 
-    title, 
+  const {
+    title,
     instructions,
     category,
     ingredients,
@@ -103,15 +103,15 @@ app.post('/api/recipes', (req, res) => {
       ),
       servings: servings || null,
       cookingTime: cookingTime || null
-    }
+    };
     recipes.push(newRecipe);
     return res.status(201).send(newRecipe);
   }
-  
+
   res.status(400).send(validationError);
 });
 
 const PORT = 3001;
 app.listen(PORT, () => {
-  console.log(`Server up and running`);
+  console.log('Server up and running');
 });
