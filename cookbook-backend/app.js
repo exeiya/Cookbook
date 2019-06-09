@@ -3,6 +3,16 @@ const app = express();
 const cors = require('cors');
 const bodyParser = require('body-parser');
 const recipesRouter = require('./controllers/recipes');
+require('dotenv').config();
+const mongoose = require('mongoose');
+
+mongoose.connect(process.env.MONGODB_URI, { useNewUrlParser: true })
+  .then(() => {
+    console.log('Connected to DB');
+  })
+  .catch((error) => {
+    console.log(`Connecting to DB failed: ${error.message}`);
+  });
 
 app.use(cors());
 app.use(bodyParser.json());
