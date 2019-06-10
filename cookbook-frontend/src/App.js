@@ -17,7 +17,7 @@ function App(props) {
   }, [initializeRecipes]);
 
   const recipeById = (id) => {
-    return props.recipes.find(recipe => recipe.id === Number(id));
+    return props.recipes.find(recipe => recipe.id === id);
   };
 
   return (
