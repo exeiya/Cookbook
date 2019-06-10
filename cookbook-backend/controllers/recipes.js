@@ -1,54 +1,25 @@
 const recipesRouter = require('express').Router();
-
-let recipes = [
-  {
-    id: 1,
-    title: 'Mustikkapiirakka',
-    ingredients: [
-      {
-        name: 'mustikka',
-        amount: '1 kpl'
-      },
-      {
-        name: 'piirakka',
-        amount: '1 kpl'
-      }
-    ],
-    instructions: 'Yhdistä mustikka ja piirakka.',
-    servings: 8,
-    cookingTime: '2 tuntia',
-    category: 'jälkiruoka'
-  },
-  {
-    id: 2,
-    title: 'Makaroonilaatikko',
-    ingredients: [
-      {
-        name: 'makarooni',
-        amount: '1 kpl'
-      },
-      {
-        name: 'laatikko',
-        amount: '1 kpl'
-      }
-    ],
-    instructions: 'Laita makaroonit laatikkoon',
-    servings: 6,
-    cookingTime: '2 tuntia',
-    category: 'pääruoka'
-  }
-];
+const Recipe = require('../models/recipe');
 
 recipesRouter.get('/', (req, res) => {
-  res.json(recipes);
+  Recipe.find({}).then(recipes => {
+    res.json(recipes.map(recipe => recipe.toJSON()));
+  });
 });
 
 recipesRouter.get('/:id', (req, res) => {
-  const recipe = recipes
-    .find(recipe => recipe.id === Number(req.params.id));
-
-  if (recipe) res.json(recipe);
-  res.status(404).end();
+  Recipe.findById(req.params.id)
+    .then(recipe => {
+      if (recipe) {
+        res.json(recipe.toJSON());
+      } else {
+        res.status(404).end();
+      }
+    })
+    .catch(error => {
+      console.log('error', error);
+      res.status(400).end();
+    });
 });
 
 const validateFields = (recipe) => {
@@ -89,8 +60,7 @@ recipesRouter.post('/', (req, res) => {
   const validationError = validateFields(req.body);
 
   if (!validationError) {
-    const newRecipe = {
-      id: recipes.length + 1,
+    const newRecipe = new Recipe({
       title,
       instructions,
       category,
@@ -98,13 +68,18 @@ recipesRouter.post('/', (req, res) => {
         ({ name: ingredient.name, amount: ingredient.amount || '' })
       ),
       servings: servings || null,
-      cookingTime: cookingTime || null
-    };
-    recipes.push(newRecipe);
-    return res.status(201).send(newRecipe);
+      cookingTime: cookingTime || null,
+      date: new Date()
+    });
+    newRecipe.save()
+      .then(savedRecipe => {
+        res.status(201).send(savedRecipe.toJSON());
+      })
+      .catch(error => {
+        console.log(error);
+        res.status(400).send(validationError);
+      });
   }
-
-  res.status(400).send(validationError);
 });
 
 module.exports = recipesRouter;
