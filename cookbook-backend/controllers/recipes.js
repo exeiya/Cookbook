@@ -22,31 +22,6 @@ recipesRouter.get('/:id', (req, res) => {
     });
 });
 
-const validateFields = (recipe) => {
-  const {
-    title,
-    instructions,
-    category,
-    ingredients
-  } = recipe;
-
-  if (!title || !instructions || !category || !ingredients) {
-    return ({ error: 'Missing required fields' });
-  } else if (!Array.isArray(ingredients) || ingredients.length === 0) {
-    return ({ error: 'Missing ingredients' });
-  }
-
-  let ingredientsError = null;
-  ingredients.forEach(ingredient => {
-    if (!ingredient.name) {
-      ingredientsError = ({ error: 'Missing ingredient name' });
-      return;
-    }
-  });
-
-  return ingredientsError;
-};
-
 recipesRouter.post('/', (req, res) => {
   const {
     title,
@@ -57,29 +32,25 @@ recipesRouter.post('/', (req, res) => {
     cookingTime
   } = req.body;
 
-  const validationError = validateFields(req.body);
-
-  if (!validationError) {
-    const newRecipe = new Recipe({
-      title,
-      instructions,
-      category,
-      ingredients: ingredients.map(ingredient =>
-        ({ name: ingredient.name, amount: ingredient.amount || '' })
-      ),
-      servings: servings || null,
-      cookingTime: cookingTime || null,
-      date: new Date()
+  const newRecipe = new Recipe({
+    title,
+    instructions,
+    category,
+    ingredients: ingredients.map(ingredient =>
+      ({ name: ingredient.name, amount: ingredient.amount || '' })
+    ),
+    servings: servings || null,
+    cookingTime: cookingTime || null,
+    date: new Date()
+  });
+  newRecipe.save()
+    .then(savedRecipe => {
+      res.status(201).send(savedRecipe.toJSON());
+    })
+    .catch(error => {
+      console.log(error);
+      res.status(400).send(error);
     });
-    newRecipe.save()
-      .then(savedRecipe => {
-        res.status(201).send(savedRecipe.toJSON());
-      })
-      .catch(error => {
-        console.log(error);
-        res.status(400).send(validationError);
-      });
-  }
 });
 
 module.exports = recipesRouter;

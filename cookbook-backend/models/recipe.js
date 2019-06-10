@@ -1,17 +1,34 @@
 const mongoose = require('mongoose');
 
 const ingredientSchema = new mongoose.Schema({
-  name: String,
+  name: {
+    type: String,
+    required: true
+  },
   amount: String
 }, { _id: false });
 
 const recipeSchema = new mongoose.Schema({
-  title: String,
-  instructions: String,
-  category: String,
+  title: {
+    type: String,
+    required: true,
+    minlength: 3
+  },
+  instructions: {
+    type: String,
+    required: true
+  },
+  category: {
+    type: String,
+    enum: ['pääruoka', 'jälkiruoka', 'salaatti'],
+    required: true
+  },
   servings: Number,
   cookingTime: String,
-  ingredients: [ingredientSchema],
+  ingredients: {
+    type: [ingredientSchema],
+    required: true
+  },
   date: Date
 });
 
