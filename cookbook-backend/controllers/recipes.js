@@ -7,7 +7,7 @@ recipesRouter.get('/', (req, res) => {
   });
 });
 
-recipesRouter.get('/:id', (req, res) => {
+recipesRouter.get('/:id', (req, res, next) => {
   Recipe.findById(req.params.id)
     .then(recipe => {
       if (recipe) {
@@ -17,12 +17,11 @@ recipesRouter.get('/:id', (req, res) => {
       }
     })
     .catch(error => {
-      console.log('error', error);
-      res.status(400).end();
+      next(error);
     });
 });
 
-recipesRouter.post('/', (req, res) => {
+recipesRouter.post('/', (req, res, next) => {
   const {
     title,
     instructions,
@@ -48,8 +47,7 @@ recipesRouter.post('/', (req, res) => {
       res.status(201).send(savedRecipe.toJSON());
     })
     .catch(error => {
-      console.log(error);
-      res.status(400).send(error);
+      next(error);
     });
 });
 
