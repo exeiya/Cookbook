@@ -6,10 +6,12 @@ import thunk from 'redux-thunk';
 import App from './App';
 import recipeReducer from './reducers/recipeReducer';
 import notificationReducer from './reducers/notificationReducer';
+import loginModalReducer from './reducers/loginModalReducer';
 
 const reducer = combineReducers({
   recipes: recipeReducer,
-  notification: notificationReducer
+  notification: notificationReducer,
+  loginModal: loginModalReducer
 });
 
 const store = createStore(reducer, applyMiddleware(thunk));
