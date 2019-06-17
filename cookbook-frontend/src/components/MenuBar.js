@@ -2,7 +2,7 @@ import React from 'react';
 import { connect } from 'react-redux';
 import { Link } from 'react-router-dom';
 import { Menu, Icon } from 'semantic-ui-react';
-import { openLogin } from '../reducers/loginReducer';
+import { openLoginModal } from '../reducers/loginModalReducer';
 
 const MenuBar = (props) => {
   return (
@@ -11,7 +11,7 @@ const MenuBar = (props) => {
       <Menu.Item as={Link} to="/recipes" name="reseptit" />
       <Menu.Item as={Link} to="/createNewRecipe" name="Uusi resepti" />
       <Menu.Menu position="right">
-        <Menu.Item name="login" onClick={() => props.openLogin()}>
+        <Menu.Item name="login" onClick={() => props.openLoginModal()}>
           <Icon name="user circle outline" />
           Kirjaudu sisään
         </Menu.Item>
@@ -22,5 +22,5 @@ const MenuBar = (props) => {
 
 export default connect(
   null,
-  { openLogin }
+  { openLoginModal }
 )(MenuBar);
