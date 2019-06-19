@@ -7,11 +7,13 @@ import App from './App';
 import recipeReducer from './reducers/recipeReducer';
 import notificationReducer from './reducers/notificationReducer';
 import loginModalReducer from './reducers/loginModalReducer';
+import loginReducer from './reducers/loginReducer';
 
 const reducer = combineReducers({
   recipes: recipeReducer,
   notification: notificationReducer,
-  loginModal: loginModalReducer
+  loginModal: loginModalReducer,
+  loggedUser: loginReducer,
 });
 
 const store = createStore(reducer, applyMiddleware(thunk));
