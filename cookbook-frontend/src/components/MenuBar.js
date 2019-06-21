@@ -38,6 +38,7 @@ const MenuBar = (props) => {
       <Menu.Item as={Link} to="/" name="etusivu" />
       <Menu.Item as={Link} to="/recipes" name="reseptit" />
       <Menu.Item as={Link} to="/createNewRecipe" name="Uusi resepti" />
+      <Menu.Item as={Link} to="/users" name="kayttajat">Käyttäjät</Menu.Item>
       <Menu.Menu position="right">
         {loginItem()}
       </Menu.Menu>
