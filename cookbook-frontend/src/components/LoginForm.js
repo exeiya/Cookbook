@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { connect } from 'react-redux';
-import { Modal, Form, Button, Divider } from 'semantic-ui-react';
+import { Modal, Form, Button, Divider, Message } from 'semantic-ui-react';
 import { closeLoginModal } from '../reducers/loginModalReducer';
 import { login } from '../reducers/loginReducer';
 import { notify } from '../reducers/notificationReducer';
@@ -8,12 +8,28 @@ import { notify } from '../reducers/notificationReducer';
 const LoginForm = (props) => {
   const [ username, setUsername] = useState();
   const [ password, setPassword ] = useState();
+  const [ error, setError] = useState('');
+
+  const validateFields = () => {
+    let errorMsg = '';
+    if (!username || !password) {
+      errorMsg = 'Kirjoita käyttäjätunnus ja salasana kirjautuaksesi';
+    }
+
+    setError(errorMsg);
+    return errorMsg.length === 0;
+  };
 
   const handleSubmit = (event) => {
     event.preventDefault();
-    props.login(username);
-    props.closeLoginModal();
-    props.notify(`Tervetuloa ${username}!`, 'success');
+
+    if (validateFields()) {
+      props.login(username);
+      setUsername('');
+      setPassword('');
+      props.closeLoginModal();
+      props.notify(`Tervetuloa ${username}!`, 'success');
+    }
   };
 
   return(
@@ -22,6 +38,7 @@ const LoginForm = (props) => {
         <div style={{ textAlign: 'center', paddingBottom: '20px' }}>
           <h2>Kirjaudu sisään</h2>
         </div>
+        { error.length === 0 ? null : <Message negative>{error}</Message> }
         <Form onSubmit={handleSubmit}>
           <Form.Field>
             <label>Käyttäjätunnus</label>
