@@ -20,15 +20,11 @@ export const initializeUsers = () => async (dispatch) => {
 };
 
 export const createUser = (user) => async (dispatch) => {
-  try {
-    const newUser = await userService.create(user);
-    dispatch({
-      type: 'ADD_USER',
-      data: newUser
-    });
-  } catch (e) {
-    console.log(e);
-  }
+  const newUser = await userService.create(user);
+  dispatch({
+    type: 'ADD_USER',
+    data: newUser
+  });
 };
 
 export default userReducer;

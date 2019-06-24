@@ -3,6 +3,7 @@ import { connect } from 'react-redux';
 import { Grid, Form, Button, Icon } from 'semantic-ui-react';
 import { withRouter } from 'react-router-dom';
 import { createUser } from '../reducers/userReducer';
+import { notify } from '../reducers/notificationReducer';
 
 const SignupForm = (props) => {
   const [values, setValues] = useState({
@@ -38,18 +39,21 @@ const SignupForm = (props) => {
     return isValid;
   };
 
-  const handleSubmit = (event) => {
+  const handleSubmit = async (event) => {
     event.preventDefault();
     if (validateFields()) {
-      setValues({
-        username: '',
-        password: '',
-        passwordConfirm: ''
-      });
-      props.createUser({
-        username: values.username,
-        password: values.password
-      });
+      try {
+        await props.createUser({
+          username: values.username,
+          password: values.password
+        });
+        setValues({ username: '', password: '', passwordConfirm: '' });
+        props.history.push('/');
+        props.notify('Rekisteröityminen onnistui! Voit nyt kirjautua sisään käyttäjätunnuksellasi.', 'success');
+      } catch (e) {
+        console.log(e);
+        props.notify('Virhe käyttäjän luonnissa! Uutta käyttäjätunnusta ei luotu.', 'error');
+      }
     }
   };
 
@@ -114,5 +118,5 @@ const SignupForm = (props) => {
 
 export default connect(
   null,
-  { createUser }
+  { createUser, notify }
 )(withRouter(SignupForm));
