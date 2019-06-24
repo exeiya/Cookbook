@@ -10,6 +10,7 @@ import Dashboard from './components/Dashboard';
 import MenuBar from './components/MenuBar';
 import LoginForm from './components/LoginForm';
 import Users from './components/Users';
+import SignupForm from './components/SignupForm';
 import { initializeRecipes } from './reducers/recipeReducer';
 import { initializeUsers } from './reducers/userReducer';
 
@@ -37,6 +38,7 @@ function App(props) {
         <Route path="/createNewRecipe" render={() => <RecipeForm />} />
         <Route exact path="/recipes/:id" render={({ match }) => <Recipe recipe={recipeById(match.params.id)}/>} />
         <Route exact path="/users" render={() => <Users />} />
+        <Route exact path="/signup" render={() => <SignupForm /> } />
       </Router>
     </Container>
   );
