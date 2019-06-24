@@ -3,9 +3,8 @@ const User = require('../models/user');
 const bcrypt = require('bcrypt');
 
 usersRouter.get('/', async (req, res) => {
-  await User.find({}).then(users => {
-    res.json(users);
-  });
+  const users = await User.find({});
+  res.json(users.map(user => user.toJSON()));
 });
 
 usersRouter.post('/', async (req, res, next) => {
@@ -20,7 +19,7 @@ usersRouter.post('/', async (req, res, next) => {
       recipes: []
     });
 
-    const savedUser = newUser.save();
+    const savedUser = await newUser.save();
     res.json(savedUser);
   } catch (exception) {
     next(exception);
