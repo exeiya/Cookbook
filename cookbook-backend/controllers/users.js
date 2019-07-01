@@ -8,13 +8,22 @@ usersRouter.get('/', async (req, res) => {
 });
 
 usersRouter.post('/', async (req, res, next) => {
-  const { username, email, password } = req.body;
+  const { username, password } = req.body;
+
+  if (!password) {
+    return res.status(400).json({
+      error: 'Password required'
+    });
+  } else if (password.length < 10 || !RegExp('^(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.*[.,:;-_])').test(password)) {
+    return res.status(400).json({
+      error: 'Password is not strong enough'
+    });
+  }
 
   try {
     const passwordHash = await bcrypt.hash(password, 10);
     const newUser = new User({
       username,
-      email,
       passwordHash,
       recipes: []
     });
