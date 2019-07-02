@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { connect } from 'react-redux';
 import shortid from 'shortid';
 import { withRouter } from 'react-router-dom';
-import { Form, Button, Icon, Select, Input } from 'semantic-ui-react';
+import { Form, Button, Icon, Select, Input, Grid } from 'semantic-ui-react';
 import { addRecipe } from '../reducers/recipeReducer';
 import { notify } from '../reducers/notificationReducer';
 
@@ -178,92 +178,107 @@ const RecipeForm = (props) => {
   );
 
   return (
-    <Form onSubmit={addRecipe} noValidate>
-      <Form.Field  width={8} error={errors.title && true}>
-        <div>
-          <label style={{ fontWeight: 'bold' }}>Reseptin nimi</label>
-          {errors.title && validationErrorMsg(errors.title)}
-        </div>
-        <input
-          onChange={({ target }) => handleChange(target)}
-          name="title"
-          value={values.title}
-          placeholder="Reseptin nimi"
-          required />
-      </Form.Field>
+    <Grid>
+      <Grid.Row columns={1}>
+        <Grid.Column>
+          <div style={{ textAlign: 'center' }}>
+            <h2>Luo uusi resepti</h2>
+          </div>
+        </Grid.Column>
+      </Grid.Row>
+      <Grid.Row columns={1} centered>
+        <Grid.Column width={12}>
+          <Form onSubmit={addRecipe} noValidate>
+            <Form.Field  width={8} error={errors.title && true}>
+              <div>
+                <label style={{ fontWeight: 'bold' }}>Reseptin nimi</label>
+                {errors.title && validationErrorMsg(errors.title)}
+              </div>
+              <input
+                onChange={({ target }) => handleChange(target)}
+                name="title"
+                value={values.title}
+                placeholder="Reseptin nimi"
+                required />
+            </Form.Field>
 
-      <Form.Group grouped>
-        <table>
-          <tbody>
-            {addedIngredients.length > 0 ? <tr><th>Ainesosa</th><th>Määrä</th></tr> : null}
-            {addedIngredients}
-          </tbody>
-        </table>
-        {errors.ingredients && <div style={{ color: '#9f2a28', paddingBottom: '10px' }}>
-          <Icon color="yellow" name="exclamation triangle" /> {errors.ingredients}</div>}
-        <Button type="button" onClick={addIngredient} color="teal">Lisää uusi ainesosa</Button>
-      </Form.Group>
+            <Form.Group grouped>
+              <table>
+                <tbody>
+                  {addedIngredients.length > 0 ? <tr><th>Ainesosa</th><th>Määrä</th></tr> : null}
+                  {addedIngredients}
+                </tbody>
+              </table>
+              {errors.ingredients && <div style={{ color: '#9f2a28', paddingBottom: '10px' }}>
+                <Icon color="yellow" name="exclamation triangle" /> {errors.ingredients}</div>}
+              <Button type="button" onClick={addIngredient} color="teal">Lisää uusi ainesosa</Button>
+            </Form.Group>
 
-      <Form.Group>
-        <Form.Field width={3} error={errors.servings && true}>
-          <label>Annosmäärä</label>
-          <Input
-            onChange={({ target }) => handleChange(target)}
-            name="servings"
-            label={{ basic: true, content: 'annosta' }}
-            labelPosition="right"
-            type="number"
-            min="0"
-          />
-        </Form.Field>
-        <Form.Field width={4} error={errors.cookingTime && true}>
-          <label>Valmistusaika</label>
-          <Input
-            onChange={({ target }) => handleChange(target)}
-            name="cookingTime"
-            type="number"
-            min="0"
-            action>
-            <input />
-            <Select
-              compact
-              options={cookingTimeOptions}
-              defaultValue={cookingTimeOptions[0].value}
-              name="cookingTimeUnit"
-              onChange={(e, target) => handleChange(target)}
-            />
-          </Input>
-        </Form.Field>
-        <Form.Select
-          onChange={(e, { value }) => setValues({ ...values, category: value })}
-          onClick={() => setErrors({ ...errors, category: null })}
-          error={errors.category && true}
-          width={3}
-          name="category"
-          fluid
-          label="Reseptin tyyppi"
-          placeholder="Reseptin tyyppi"
-          options={categoryOptions}
-        />
-      </Form.Group>
-      {errors.servings && validationErrorMsg(errors.servings)}
-      {errors.cookingTime && validationErrorMsg(errors.cookingTime)}
-      {errors.category && validationErrorMsg(errors.category)}
+            <Form.Group>
+              <Form.Field width={4} error={errors.servings && true}>
+                <label>Annosmäärä</label>
+                <Input
+                  onChange={({ target }) => handleChange(target)}
+                  name="servings"
+                  label={{ basic: true, content: 'annosta' }}
+                  labelPosition="right"
+                  type="number"
+                  min="0"
+                />
+              </Form.Field>
+              <Form.Field width={4} error={errors.cookingTime && true}>
+                <label>Valmistusaika</label>
+                <Input
+                  onChange={({ target }) => handleChange(target)}
+                  name="cookingTime"
+                  type="number"
+                  min="0"
+                  action>
+                  <input />
+                  <Select
+                    compact
+                    options={cookingTimeOptions}
+                    defaultValue={cookingTimeOptions[0].value}
+                    name="cookingTimeUnit"
+                    onChange={(e, target) => handleChange(target)}
+                  />
+                </Input>
+              </Form.Field>
+              <Form.Select
+                onChange={(e, { value }) => setValues({ ...values, category: value })}
+                onClick={() => setErrors({ ...errors, category: null })}
+                error={errors.category && true}
+                width={4}
+                name="category"
+                fluid
+                label="Reseptin tyyppi"
+                placeholder="Reseptin tyyppi"
+                options={categoryOptions}
+              />
+            </Form.Group>
+            {errors.servings && validationErrorMsg(errors.servings)}
+            {errors.cookingTime && validationErrorMsg(errors.cookingTime)}
+            {errors.category && validationErrorMsg(errors.category)}
 
-      <Form.Field error={errors.instructions && true} >
-        <div>
-          <label style={{ fontWeight: 'bold' }}>Ohjeet</label>
-          {errors.instructions && validationErrorMsg(errors.instructions)}
-        </div>
-        <textarea
-          onChange={({ target }) => handleChange(target)}
-          name="instructions" value={values.instructions}
-          placeholder="Kirjoita reseptin ohje tähän"
-          required
-        />
-      </Form.Field>
-      <Button positive>Lisää resepti</Button>
-    </Form>
+            <Form.Field error={errors.instructions && true} >
+              <div>
+                <label style={{ fontWeight: 'bold' }}>Ohjeet</label>
+                {errors.instructions && validationErrorMsg(errors.instructions)}
+              </div>
+              <textarea
+                onChange={({ target }) => handleChange(target)}
+                name="instructions" value={values.instructions}
+                placeholder="Kirjoita reseptin ohje tähän"
+                required
+              />
+            </Form.Field>
+            <div style={{ textAlign: 'center' }}>
+              <Button positive>Lisää resepti</Button>
+            </div>
+          </Form>
+        </Grid.Column>
+      </Grid.Row>
+    </Grid>
   );
 };
 

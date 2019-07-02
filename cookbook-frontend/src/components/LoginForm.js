@@ -30,6 +30,7 @@ const LoginForm = (props) => {
         setUsername('');
         setPassword('');
         props.closeLoginModal();
+        props.history.push('/');
         props.notify(`Tervetuloa ${username}!`, 'success');
       } catch (error) {
         console.log(error);

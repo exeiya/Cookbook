@@ -14,9 +14,13 @@ import SignupForm from './components/SignupForm';
 import { initializeRecipes } from './reducers/recipeReducer';
 import { initializeUsers } from './reducers/userReducer';
 import { setInitialLoggedUser } from './reducers/loginReducer';
+import { openLoginModal } from './reducers/loginModalReducer';
 
 function App(props) {
-  const { initializeRecipes, initializeUsers, setInitialLoggedUser } = props;
+  const { initializeRecipes,
+    initializeUsers,
+    setInitialLoggedUser,
+    openLoginModal } = props;
 
   useEffect(() => {
     initializeRecipes();
@@ -35,6 +39,11 @@ function App(props) {
     return props.recipes.find(recipe => recipe.id === id);
   };
 
+  const showLoginModal = () => {
+    openLoginModal();
+    return <Redirect to="/" />;
+  };
+
   return (
     <Container>
       <Router>
@@ -44,7 +53,8 @@ function App(props) {
         <Notification />
         <Route exact path="/" render={() => <Dashboard />} />
         <Route exact path="/recipes" render={() => <RecipeList />} />
-        <Route path="/createNewRecipe" render={() => <RecipeForm />} />
+        <Route path="/createNewRecipe" render={() => (
+          props.loggedUser ? <RecipeForm /> : showLoginModal())}  />
         <Route exact path="/recipes/:id" render={({ match }) => <Recipe recipe={recipeById(match.params.id)}/>} />
         <Route exact path="/users" render={() => <Users />} />
         <Route exact path="/signup" render={() => (
@@ -63,5 +73,8 @@ const mapStateToProps = (state) => {
 
 export default connect(
   mapStateToProps,
-  { initializeRecipes, initializeUsers, setInitialLoggedUser }
+  { initializeRecipes,
+    initializeUsers,
+    setInitialLoggedUser,
+    openLoginModal }
 )(App);

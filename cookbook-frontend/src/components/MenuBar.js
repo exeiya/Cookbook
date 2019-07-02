@@ -7,16 +7,19 @@ import { logout } from '../reducers/loginReducer';
 
 const MenuBar = (props) => {
   const loginDropdownTrigger = (
-    <span>
+    <span style={{ minWidth: '90px' }}>
       <Icon name="user circle" /> {props.loggedUser}
     </span>
   );
 
-  const loginItem = () => {
+  const loggedUserMenu = () => {
     if (props.loggedUser) {
       return (
         <Dropdown item trigger={loginDropdownTrigger}>
           <Dropdown.Menu>
+            <Dropdown.Item as={Link} to="/createNewRecipe">
+              Luo uusi resepti
+            </Dropdown.Item>
             <Dropdown.Item onClick={() => props.logout()}>
               Kirjaudu ulos
             </Dropdown.Item>
@@ -37,10 +40,9 @@ const MenuBar = (props) => {
     <Menu>
       <Menu.Item as={Link} to="/" name="etusivu" />
       <Menu.Item as={Link} to="/recipes" name="reseptit" />
-      <Menu.Item as={Link} to="/createNewRecipe" name="Uusi resepti" />
       <Menu.Item as={Link} to="/users" name="kayttajat">Käyttäjät</Menu.Item>
       <Menu.Menu position="right">
-        {loginItem()}
+        {loggedUserMenu()}
       </Menu.Menu>
     </Menu>
   );
