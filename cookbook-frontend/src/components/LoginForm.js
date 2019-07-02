@@ -21,15 +21,20 @@ const LoginForm = (props) => {
     return errorMsg.length === 0;
   };
 
-  const handleSubmit = (event) => {
+  const handleSubmit = async (event) => {
     event.preventDefault();
 
     if (validateFields()) {
-      props.login(username);
-      setUsername('');
-      setPassword('');
-      props.closeLoginModal();
-      props.notify(`Tervetuloa ${username}!`, 'success');
+      try {
+        await props.login({ username, password });
+        setUsername('');
+        setPassword('');
+        props.closeLoginModal();
+        props.notify(`Tervetuloa ${username}!`, 'success');
+      } catch (error) {
+        console.log(error);
+        setError('Wrong username or password');
+      }
     }
   };
 

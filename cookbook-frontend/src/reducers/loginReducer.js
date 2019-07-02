@@ -1,6 +1,9 @@
+import loginService from '../services/login';
+
 const loginReducer = (state = null, action) => {
-  console.log(state, action);
   switch (action.type) {
+    case 'INIT_LOGGED_USER':
+      return action.user;
     case 'LOGIN':
       return action.user;
     case 'LOGOUT':
@@ -10,14 +13,24 @@ const loginReducer = (state = null, action) => {
   }
 };
 
-export const login = (user) => dispatch => {
+export const setInitialLoggedUser = (user) => dispatch => {
+  dispatch({
+    type: 'INIT_LOGGED_USER',
+    user: user.username
+  });
+};
+
+export const login = (user) => async dispatch => {
+  const loggedUser = await loginService.login(user);
+  window.localStorage.setItem('loggedCookbookUser', JSON.stringify(loggedUser));
   dispatch({
     type: 'LOGIN',
-    user
+    user: loggedUser.username
   });
 };
 
 export const logout = () => dispatch => {
+  window.localStorage.clear();
   dispatch({
     type: 'LOGOUT'
   });

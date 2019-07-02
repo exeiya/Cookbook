@@ -1,6 +1,6 @@
 import React, { useEffect } from 'react';
 import { connect } from 'react-redux';
-import { BrowserRouter as Router, Route } from 'react-router-dom';
+import { BrowserRouter as Router, Route, Redirect } from 'react-router-dom';
 import { Container } from 'semantic-ui-react';
 import RecipeForm from './components/RecipeForm';
 import RecipeList from './components/RecipeList';
@@ -13,14 +13,23 @@ import Users from './components/Users';
 import SignupForm from './components/SignupForm';
 import { initializeRecipes } from './reducers/recipeReducer';
 import { initializeUsers } from './reducers/userReducer';
+import { setInitialLoggedUser } from './reducers/loginReducer';
 
 function App(props) {
-  const { initializeRecipes, initializeUsers } = props;
+  const { initializeRecipes, initializeUsers, setInitialLoggedUser } = props;
 
   useEffect(() => {
     initializeRecipes();
     initializeUsers();
   }, [initializeRecipes, initializeUsers]);
+
+  useEffect(() => {
+    const storedLoggedUser = window.localStorage.getItem('loggedCookbookUser');
+    if (storedLoggedUser) {
+      const user = JSON.parse(storedLoggedUser);
+      setInitialLoggedUser(user);
+    }
+  }, [setInitialLoggedUser]);
 
   const recipeById = (id) => {
     return props.recipes.find(recipe => recipe.id === id);
@@ -38,7 +47,8 @@ function App(props) {
         <Route path="/createNewRecipe" render={() => <RecipeForm />} />
         <Route exact path="/recipes/:id" render={({ match }) => <Recipe recipe={recipeById(match.params.id)}/>} />
         <Route exact path="/users" render={() => <Users />} />
-        <Route exact path="/signup" render={() => <SignupForm /> } />
+        <Route exact path="/signup" render={() => (
+          props.loggedUser ? <Redirect to="/" /> : <SignupForm /> )} />
       </Router>
     </Container>
   );
@@ -46,11 +56,12 @@ function App(props) {
 
 const mapStateToProps = (state) => {
   return {
-    recipes: state.recipes
+    recipes: state.recipes,
+    loggedUser: state.loggedUser
   };
 };
 
 export default connect(
   mapStateToProps,
-  { initializeRecipes, initializeUsers }
+  { initializeRecipes, initializeUsers, setInitialLoggedUser }
 )(App);
