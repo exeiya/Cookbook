@@ -4,6 +4,7 @@ const cors = require('cors');
 const bodyParser = require('body-parser');
 const recipesRouter = require('./controllers/recipes');
 const usersRouter = require('./controllers/users');
+const loginRouter = require('./controllers/login');
 require('dotenv').config();
 const mongoose = require('mongoose');
 const morgan = require('morgan');
@@ -25,6 +26,7 @@ app.use(morgan(':method :url :status :res[content-length] :data - :response-time
 
 app.use('/api/recipes', recipesRouter);
 app.use('/api/users', usersRouter);
+app.use('/api/login', loginRouter);
 app.use(middleware.errorHandler);
 
 module.exports = app;
