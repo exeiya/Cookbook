@@ -23,6 +23,7 @@ mongoose.connect(process.env.MONGODB_URI, { useNewUrlParser: true })
 app.use(cors());
 app.use(bodyParser.json());
 app.use(morgan(':method :url :status :res[content-length] :data - :response-time ms'));
+app.use(middleware.tokenExtractor);
 
 app.use('/api/recipes', recipesRouter);
 app.use('/api/users', usersRouter);

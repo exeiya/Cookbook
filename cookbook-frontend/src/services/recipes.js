@@ -2,14 +2,21 @@ import axios from 'axios';
 
 const baseUrl = 'http://localhost:3001/api/recipes';
 
+let token = null;
+
+const setToken = newToken => {
+  token = `Bearer ${newToken}`;
+};
+
 const getAll = async () => {
   const response = await axios.get(baseUrl);
   return response.data;
 };
 
 const create = async (recipe) => {
-  const response = await axios.post(baseUrl, recipe);
+  const config = { headers: { Authorization: token } };
+  const response = await axios.post(baseUrl, recipe, config);
   return response.data;
 };
 
-export default { getAll, create };
+export default { getAll, create, setToken };

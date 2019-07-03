@@ -29,7 +29,11 @@ const recipeSchema = new mongoose.Schema({
     type: [ingredientSchema],
     required: true
   },
-  date: Date
+  date: Date,
+  user: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'User'
+  }
 });
 
 recipeSchema.set('toJSON', {
