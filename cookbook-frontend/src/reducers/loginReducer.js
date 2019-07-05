@@ -4,9 +4,9 @@ import recipeService from '../services/recipes';
 const loginReducer = (state = null, action) => {
   switch (action.type) {
     case 'INIT_LOGGED_USER':
-      return action.user;
+      return { ...action.user };
     case 'LOGIN':
-      return action.user;
+      return { ...action.user };
     case 'LOGOUT':
       return null;
     default:
@@ -18,7 +18,7 @@ export const setInitialLoggedUser = (user) => dispatch => {
   recipeService.setToken(user.token);
   dispatch({
     type: 'INIT_LOGGED_USER',
-    user: user.username
+    user: ({ id: user.id, username: user.username })
   });
 };
 
@@ -28,12 +28,13 @@ export const login = (user) => async dispatch => {
   recipeService.setToken(loggedUser.token);
   dispatch({
     type: 'LOGIN',
-    user: loggedUser.username
+    user: { id: loggedUser.id, username: loggedUser.username }
   });
 };
 
 export const logout = () => dispatch => {
   window.localStorage.clear();
+  recipeService.setToken(null);
   dispatch({
     type: 'LOGOUT'
   });

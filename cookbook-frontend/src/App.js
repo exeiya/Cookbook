@@ -11,6 +11,7 @@ import MenuBar from './components/MenuBar';
 import LoginForm from './components/LoginForm';
 import Users from './components/Users';
 import SignupForm from './components/SignupForm';
+import User from './components/User';
 import { initializeRecipes } from './reducers/recipeReducer';
 import { initializeUsers } from './reducers/userReducer';
 import { setInitialLoggedUser } from './reducers/loginReducer';
@@ -39,6 +40,10 @@ function App(props) {
     return props.recipes.find(recipe => recipe.id === id);
   };
 
+  const userById = (id) => {
+    return props.users.find(user => user.id === id);
+  };
+
   const showLoginModal = () => {
     openLoginModal();
     return <Redirect to="/" />;
@@ -57,6 +62,8 @@ function App(props) {
           props.loggedUser ? <RecipeForm /> : showLoginModal())}  />
         <Route exact path="/recipes/:id" render={({ match }) => <Recipe recipe={recipeById(match.params.id)}/>} />
         <Route exact path="/users" render={() => <Users />} />
+        <Route exact path="/users/:id" render={({ match, location }) =>
+          <User user={userById(match.params.id)} selectedTab={location.state} />} />
         <Route exact path="/signup" render={() => (
           props.loggedUser ? <Redirect to="/" /> : <SignupForm /> )} />
       </Router>
@@ -67,7 +74,8 @@ function App(props) {
 const mapStateToProps = (state) => {
   return {
     recipes: state.recipes,
-    loggedUser: state.loggedUser
+    loggedUser: state.loggedUser,
+    users: state.users
   };
 };
 

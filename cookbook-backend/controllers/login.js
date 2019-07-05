@@ -20,7 +20,7 @@ loginRouter.post('/', async (req, res) => {
     process.env.SECRET
   );
 
-  return res.status(200).json({ token, username: user.username });
+  return res.status(200).json({ token, username: user.username, id: user._id });
 });
 
 module.exports = loginRouter;

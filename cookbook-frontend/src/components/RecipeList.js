@@ -1,10 +1,10 @@
 import React, { useState } from 'react';
 import { connect } from 'react-redux';
 import { Card, Grid, Input, Button, Icon } from 'semantic-ui-react';
-import { Link } from 'react-router-dom';
+import { Link, withRouter } from 'react-router-dom';
 import picture from '../assets/default_picture.jpg';
 
-const RecipeList = ({ recipes, loggedUser }) => {
+const RecipeList = ({ history, recipes, loggedUser }) => {
   const [ filter, setfilter ] = useState('');
 
   const recipesToShow = filter
@@ -20,10 +20,16 @@ const RecipeList = ({ recipes, loggedUser }) => {
   const loggedUserOptions = (
     <Grid.Row centered columns={1} stretched>
       <Grid.Column width={3}>
-        <Button color="teal"><Icon name="book"/>Omat reseptit</Button>
+        <Button color="teal" onClick={() => history.push({
+          pathname: `/users/${loggedUser.id}`, state: { tab: 0 } })}>
+          <Icon name="book"/> Omat reseptit
+        </Button>
       </Grid.Column>
       <Grid.Column width={3}>
-        <Button color="orange"><Icon name="star"/>Suosikit</Button>
+        <Button color="orange" onClick={() => history.push({
+          pathname: `/users/${loggedUser.id}`, state: { tab: 1 } })}>
+          <Icon name="star"/>Suosikit
+        </Button>
       </Grid.Column>
       <Grid.Column width={3}>
         <Button as={Link} to="/createNewRecipe" color="green"><Icon name="plus"/>Luo uusi resepti</Button>
@@ -60,4 +66,4 @@ const mapStateToProps = (state) => {
 
 export default connect(
   mapStateToProps
-)(RecipeList);
+)(withRouter(RecipeList));

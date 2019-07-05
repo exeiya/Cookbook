@@ -8,15 +8,26 @@ import { logout } from '../reducers/loginReducer';
 const MenuBar = (props) => {
   const loginDropdownTrigger = (
     <span style={{ minWidth: '90px' }}>
-      <Icon name="user circle" /> {props.loggedUser}
+      <Icon name="user circle" />
+      {props.loggedUser === null ? '' : props.loggedUser.username}
     </span>
   );
+
+  const loggedUserStyle = {
+    backgroundColor: '#00b5ad',
+    color: 'white',
+    fontWeight: 'bold',
+    borderRadius: '0 0.28571429rem 0.28571429rem 0'
+  };
 
   const loggedUserMenu = () => {
     if (props.loggedUser) {
       return (
-        <Dropdown item trigger={loginDropdownTrigger}>
+        <Dropdown style={loggedUserStyle} item trigger={loginDropdownTrigger}>
           <Dropdown.Menu>
+            <Dropdown.Item as={Link} to={`/users/${props.loggedUser.id}`}>
+              Oma profiili
+            </Dropdown.Item>
             <Dropdown.Item as={Link} to="/createNewRecipe">
               Luo uusi resepti
             </Dropdown.Item>
