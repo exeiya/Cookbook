@@ -1,5 +1,5 @@
 import React from 'react';
-import { Table, Grid, Image, Icon, Label } from 'semantic-ui-react';
+import { Table, Grid, Image, Icon, Label, Button } from 'semantic-ui-react';
 import { Link } from 'react-router-dom';
 import picture from '../assets/default_picture.jpg';
 
@@ -24,15 +24,26 @@ const Recipe = ({ recipe }) => {
           <Image src={picture} size="medium" rounded/>
         </Grid.Column>
         <Grid.Column verticalAlign="bottom">
+          <Button as="div" labelPosition="left">
+            <Label as="a" basic color="red" pointing="right">
+              <Icon name="heart" /> {recipe.likes || 0}
+            </Label>
+            <Button color="red" icon>Tykkää</Button>
+          </Button>
+          <div style={{ marginTop: '10px' }}>
+            <Button color="orange">
+              <Icon name="star" /> Lisää suosikkeihin
+            </Button>
+          </div>
           <table style={{ paddingTop: '20px', paddingBottom: '20px' }}>
             <tbody>
               <tr>
                 <td style={{ paddingRight: '10px' }}><Icon name="clock outline" /> Valmistusaika</td>
-                <td> {recipe.cookingTime ? recipe.cookingTime : '--'}</td>
+                <td> {recipe.cookingTime || '--'}</td>
               </tr>
               <tr>
                 <td><Icon name="utensils" /> Annosmäärä</td>
-                <td>{recipe.servings ? recipe.servings : '--' }</td>
+                <td>{recipe.servings || '--' }</td>
               </tr>
             </tbody>
           </table>
@@ -51,7 +62,7 @@ const Recipe = ({ recipe }) => {
             <Table.Body>
               {recipe.ingredients.map(ingredient =>
                 <Table.Row key={ingredient.name} >
-                  <Table.Cell>{ingredient.amount ? ingredient.amount : null}</Table.Cell>
+                  {ingredient.amount ? <Table.Cell>{ingredient.amount}</Table.Cell> : null }
                   <Table.Cell>{ingredient.name}</Table.Cell>
                 </Table.Row>
               )}
@@ -60,7 +71,9 @@ const Recipe = ({ recipe }) => {
         </Grid.Column>
         <Grid.Column width={8}>
           <h4>Ohjeet</h4>
-          <p>{recipe.instructions}</p>
+          <p style={{ whiteSpace: 'pre-line' }}>
+            {recipe.instructions}
+          </p>
         </Grid.Column>
       </Grid.Row>
     </Grid>
