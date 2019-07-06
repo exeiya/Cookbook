@@ -1,18 +1,25 @@
 import React from 'react';
 import { Table, Grid, Image, Icon, Label } from 'semantic-ui-react';
+import { Link } from 'react-router-dom';
 import picture from '../assets/default_picture.jpg';
 
 const Recipe = ({ recipe }) => {
   if (!recipe) return null;
 
   return (
-    <Grid stackable >
+    <Grid stackable padded>
       <Grid.Row>
         <Grid.Column>
           <h3>{recipe.title}</h3>
+          {recipe.user
+            ? <div>
+              <Icon name="user" />
+              <Link to={`/users/${recipe.user.id}`}>{recipe.user.username}</Link>
+            </div>
+            : null}
         </Grid.Column>
       </Grid.Row>
-      <Grid.Row columns={2}>
+      <Grid.Row columns={3}>
         <Grid.Column width={5}>
           <Image src={picture} size="medium" rounded/>
         </Grid.Column>
