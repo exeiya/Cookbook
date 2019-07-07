@@ -1,5 +1,7 @@
 const mongoose = require('mongoose');
 
+mongoose.set('useFindAndModify', false);
+
 const ingredientSchema = new mongoose.Schema({
   name: {
     type: String,
@@ -30,10 +32,11 @@ const recipeSchema = new mongoose.Schema({
     required: true
   },
   date: Date,
+  likes: Number,
   user: {
     type: mongoose.Schema.Types.ObjectId,
     ref: 'User'
-  }
+  },
 });
 
 recipeSchema.set('toJSON', {

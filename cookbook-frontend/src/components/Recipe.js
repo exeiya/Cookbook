@@ -1,9 +1,11 @@
 import React from 'react';
+import { connect } from 'react-redux';
 import { Table, Grid, Image, Icon, Label, Button } from 'semantic-ui-react';
 import { Link } from 'react-router-dom';
 import picture from '../assets/default_picture.jpg';
+import { likeRecipe } from '../reducers/recipeReducer';
 
-const Recipe = ({ recipe }) => {
+const Recipe = ({ recipe, likeRecipe }) => {
   if (!recipe) return null;
 
   return (
@@ -28,7 +30,7 @@ const Recipe = ({ recipe }) => {
             <Label as="a" basic color="red" pointing="right">
               <Icon name="heart" /> {recipe.likes || 0}
             </Label>
-            <Button color="red" icon>Tykkää</Button>
+            <Button color="red" onClick={() => likeRecipe(recipe)}>Tykkää</Button>
           </Button>
           <div style={{ marginTop: '10px' }}>
             <Button color="orange">
@@ -80,4 +82,7 @@ const Recipe = ({ recipe }) => {
   );
 };
 
-export default Recipe;
+export default connect(
+  null,
+  { likeRecipe }
+)(Recipe);

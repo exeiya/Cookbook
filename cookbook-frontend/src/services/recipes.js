@@ -19,4 +19,11 @@ const create = async (recipe) => {
   return response.data;
 };
 
-export default { getAll, create, setToken };
+const likeRecipe = async (recipe) => {
+  const config = { headers: { Authorization: token } };
+  const res = await axios.patch(`${baseUrl}/${recipe.id}`,
+    { likes: (recipe.likes || 0) + 1 }, config);
+  return res.data;
+};
+
+export default { getAll, create, likeRecipe, setToken };

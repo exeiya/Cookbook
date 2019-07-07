@@ -47,6 +47,7 @@ recipesRouter.post('/', async (req, res, next) => {
       servings: servings || null,
       cookingTime: cookingTime || null,
       date: new Date(),
+      likes: 0,
       user: user._id
     });
     const savedRecipe = await newRecipe.save();
@@ -55,6 +56,25 @@ recipesRouter.post('/', async (req, res, next) => {
     await user.save();
 
     return res.status(201).json(savedRecipe.toJSON());
+  } catch (error) {
+    next(error);
+  }
+});
+
+recipesRouter.patch('/:id', async (req, res, next) => {
+  try {
+    const decodedToken = jwt.verify(req.token, process.env.SECRET);
+    await User.findById(decodedToken.id);
+
+    const likes = req.body.likes;
+    const id = req.params.id;
+    if (!likes) {
+      return res.status(400).json({ error: 'Missing valid fields' });
+    }
+
+    const updatedRecipe = await Recipe.findByIdAndUpdate(id, { likes }, { new: true })
+      .populate('user', { username: 1 });
+    return res.json(updatedRecipe);
   } catch (error) {
     next(error);
   }
