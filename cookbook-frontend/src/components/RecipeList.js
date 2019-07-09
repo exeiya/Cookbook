@@ -1,19 +1,63 @@
 import React, { useState } from 'react';
 import { connect } from 'react-redux';
-import { Card, Grid, Input, Button, Icon } from 'semantic-ui-react';
+import { Card, Grid, Input, Button, Icon, Image, Label, Dropdown } from 'semantic-ui-react';
 import { Link, withRouter } from 'react-router-dom';
 import picture from '../assets/default_picture.jpg';
 
 const RecipeList = ({ history, recipes, loggedUser }) => {
-  const [ filter, setfilter ] = useState('');
+  const [ filter, setFilter ] = useState('');
+  const [ sortBy, setSortBy ] = useState(null);
 
   const recipesToShow = filter
     ? recipes.filter(recipe => recipe.title.toLowerCase().includes(filter.toLowerCase()))
     : recipes;
 
-  const recipeList = recipesToShow.map(recipe =>
+  const sortRecipes = (recipes) => {
+    if (sortBy === 'title') {
+      recipes.sort((a, b) => {
+        const aTitle = a.title.toLowerCase();
+        const bTitle = b.title.toLowerCase();
+        if (aTitle > bTitle) {
+          return 1;
+        } else if (aTitle < bTitle) {
+          return -1;
+        }
+        return 0;
+      });
+    } else if (sortBy === 'likes') {
+      recipes.sort((a, b) => {
+        return b.likes - a.likes;
+      });
+    }
+
+    return recipes;
+  };
+
+  const recipeCardStyle = {
+    position: 'absolute',
+    zIndex: 1,
+    width: '92%',
+    textAlign: 'right',
+    margin: '10px',
+    color: 'black'
+  };
+
+  const recipeList = sortRecipes(recipesToShow).map(recipe =>
     <Grid.Column key={recipe.id}>
-      <Card as={Link} to={`/recipes/${recipe.id}`} color="teal" image={picture} header={recipe.title}/>
+      <Card as={Link} to={`/recipes/${recipe.id}`} color="teal">
+        <div style={recipeCardStyle}>
+          <Label size="large" style={{ backgroundColor: 'rgba(232, 232, 232, 0.8)' }}>
+            <Icon name="heart" color="red"/>
+            {recipe.likes || 0}
+          </Label>
+        </div>
+        <Image src={picture} />
+        <Card.Content>
+          <Card.Header>
+            {recipe.title}
+          </Card.Header>
+        </Card.Content>
+      </Card>
     </Grid.Column>
   );
 
@@ -37,13 +81,35 @@ const RecipeList = ({ history, recipes, loggedUser }) => {
     </Grid.Row>
   );
 
+  const sortOptions = [
+    {
+      key: 'title',
+      text: 'Nimen mukaan',
+      value: 'title'
+    },
+    {
+      key: 'likes',
+      text: 'Eniten tykkäyksiä',
+      value: 'likes',
+    }
+  ];
+
   return (
     <Grid >
       {loggedUser === null ? null : loggedUserOptions}
       <Grid.Row centered columns={1}>
         <Grid.Column textAlign="center" width={14}>
           <h3>Hae reseptejä</h3>
-          <Input icon="search" onChange={({ target }) => setfilter(target.value)} value={filter} />
+          <Input icon="search" onChange={({ target }) => setFilter(target.value)} value={filter} />
+
+          <div style={{ textAlign: 'right' }}><Icon name="sort alphabet down" />
+            <Dropdown
+              inline
+              header="Järjestä reseptit"
+              options={sortOptions}
+              placeholder="Järjestä reseptit"
+              onChange={(e, target) => setSortBy(target.value)} />
+          </div>
         </Grid.Column>
       </Grid.Row>
       <Grid.Row centered columns={3}>
