@@ -5,9 +5,22 @@ import { Link } from 'react-router-dom';
 import picture from '../assets/default_picture.jpg';
 import { likeRecipe } from '../reducers/recipeReducer';
 import { favoriteRecipe } from '../reducers/userReducer';
+import { openLoginModal } from '../reducers/loginModalReducer';
 
-const Recipe = ({ recipe, likeRecipe, favoriteRecipe, loggedUser, isFavorited }) => {
+const Recipe = (props) => {
+  const { recipe, likeRecipe, favoriteRecipe,
+    loggedUser, isFavorited, openLoginModal } = props;
   if (!recipe) return null;
+
+  const handleClick = () => ({ target }) => {
+    if (!loggedUser) {
+      openLoginModal();
+    } else if (target.name === 'like') {
+      likeRecipe(recipe);
+    } else if (target.name === 'favorite') {
+      favoriteRecipe(loggedUser.id, recipe.id);
+    }
+  };
 
   return (
     <Grid stackable padded>
@@ -31,10 +44,10 @@ const Recipe = ({ recipe, likeRecipe, favoriteRecipe, loggedUser, isFavorited })
             <Label as="a" basic color="red" pointing="right">
               <Icon name="heart" /> {recipe.likes || 0}
             </Label>
-            <Button color="red" onClick={() => likeRecipe(recipe)}>Tykkää</Button>
+            <Button color="red" name="like" onClick={handleClick()}>Tykkää</Button>
           </Button>
           <div style={{ marginTop: '10px' }}>
-            <Button basic={isFavorited || false} color="orange" onClick={() => favoriteRecipe(loggedUser.id, recipe.id)}>
+            <Button basic={isFavorited || false} color="orange" name="favorite" onClick={handleClick()}>
               <Icon name="star" /> { isFavorited ? 'Poista suosikeista' : 'Lisää suosikkeihin' }
             </Button>
           </div>
@@ -98,5 +111,5 @@ export default connect(
     loggedUser: state.loggedUser,
     isFavorited: isFavorited(state.loggedUser, state.users, ownProps.recipe)
   }),
-  { likeRecipe, favoriteRecipe }
+  { likeRecipe, favoriteRecipe, openLoginModal }
 )(Recipe);
