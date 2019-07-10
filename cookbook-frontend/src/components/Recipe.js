@@ -4,8 +4,9 @@ import { Table, Grid, Image, Icon, Label, Button } from 'semantic-ui-react';
 import { Link } from 'react-router-dom';
 import picture from '../assets/default_picture.jpg';
 import { likeRecipe } from '../reducers/recipeReducer';
+import { favoriteRecipe } from '../reducers/userReducer';
 
-const Recipe = ({ recipe, likeRecipe }) => {
+const Recipe = ({ recipe, likeRecipe, favoriteRecipe, loggedUser, isFavorited }) => {
   if (!recipe) return null;
 
   return (
@@ -33,8 +34,8 @@ const Recipe = ({ recipe, likeRecipe }) => {
             <Button color="red" onClick={() => likeRecipe(recipe)}>Tykkää</Button>
           </Button>
           <div style={{ marginTop: '10px' }}>
-            <Button color="orange">
-              <Icon name="star" /> Lisää suosikkeihin
+            <Button basic={isFavorited || false} color="orange" onClick={() => favoriteRecipe(loggedUser.id, recipe.id)}>
+              <Icon name="star" /> { isFavorited ? 'Poista suosikeista' : 'Lisää suosikkeihin' }
             </Button>
           </div>
           <table style={{ paddingTop: '20px', paddingBottom: '20px' }}>
@@ -82,7 +83,20 @@ const Recipe = ({ recipe, likeRecipe }) => {
   );
 };
 
+const isFavorited = (loggedUser, users, recipe) => {
+  let isFavorited = null;
+  if (loggedUser && users && recipe) {
+    const user = users.find(user => user.id === loggedUser.id);
+    const userfavorites = user ? user.favoriteRecipes.map(r => r.id) : null;
+    isFavorited = userfavorites ? userfavorites.includes(recipe.id) : null;
+  }
+  return isFavorited;
+};
+
 export default connect(
-  null,
-  { likeRecipe }
+  (state, ownProps) => ({
+    loggedUser: state.loggedUser,
+    isFavorited: isFavorited(state.loggedUser, state.users, ownProps.recipe)
+  }),
+  { likeRecipe, favoriteRecipe }
 )(Recipe);

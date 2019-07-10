@@ -23,11 +23,13 @@ const User = ({ loggedUser, user, selectedTab }) => {
     );
   };
 
-  const recipesToShow = user.recipes.map(recipe => recipeCard(recipe));
-
-  const recipeGrid = <Grid padded columns={4}>
-    {recipesToShow}
-  </Grid>;
+  const recipeGrid = (recipes) => {
+    return (
+      <Grid padded columns={4}>
+        {recipes.map(recipe => recipeCard(recipe))}
+      </Grid>
+    );
+  };
 
   const paneStyle = {
     minHeight: '200px',
@@ -35,11 +37,11 @@ const User = ({ loggedUser, user, selectedTab }) => {
   };
 
   const recipePane = <Tab.Pane style={paneStyle}>
-    {user.recipes.length === 0 ? 'Ei lisättyjä reseptejä' : recipeGrid}
+    {user.recipes.length === 0 ? 'Ei lisättyjä reseptejä' : recipeGrid(user.recipes)}
   </Tab.Pane>;
 
   const favoritesPane = <Tab.Pane style={paneStyle}>
-    Ei suosikkireseptejä
+    {user.favoriteRecipes.length === 0 ? 'Ei suosikkireseptejä' : recipeGrid(user.favoriteRecipes)}
   </Tab.Pane>;
 
   const panesToShow = loggedUserProfile
