@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { connect } from 'react-redux';
 import shortid from 'shortid';
 import { withRouter } from 'react-router-dom';
-import { Form, Button, Icon, Select, Input, Grid } from 'semantic-ui-react';
+import { Form, Button, Icon, Select, Input, Grid, Image, Segment } from 'semantic-ui-react';
 import { addRecipe } from '../reducers/recipeReducer';
 import { notify } from '../reducers/notificationReducer';
 
@@ -16,6 +16,7 @@ const RecipeForm = (props) => {
     name: '',
     amount: ''
   }]);
+  const [ imgFile, setImgFile ] = useState();
   const [errors, setErrors] = useState({ ingredientIds: [] });
 
   const validationErrorStyle = {
@@ -90,8 +91,11 @@ const RecipeForm = (props) => {
     }
 
     if (validateFields()) {
+      const recipeData = new FormData();
+      if (imgFile) recipeData.append('image', imgFile.file);
+      recipeData.append('recipe', JSON.stringify(newRecipe));
       try {
-        await props.addRecipe(newRecipe);
+        await props.addRecipe(recipeData);
         setValues({ title: '', instructions: '' });
         setIngredients([]);
         props.notify(`Uusi resepti '${newRecipe.title}' lisätty!`, 'success');
@@ -170,6 +174,16 @@ const RecipeForm = (props) => {
     );
   });
 
+  const handleImageChange = (target) => {
+    const file = target.files[0];
+    if(!file) return setImgFile(null);
+    setImgFile({
+      file,
+      name: file.name,
+      preview: URL.createObjectURL(file)
+    });
+  };
+
   const validationErrorMsg = (msg) => (
     <div style={validationErrorStyle}>
       <Icon color="yellow" name="exclamation triangle" />
@@ -189,30 +203,55 @@ const RecipeForm = (props) => {
       <Grid.Row columns={1} centered>
         <Grid.Column width={12}>
           <Form onSubmit={addRecipe} noValidate>
-            <Form.Field  width={8} error={errors.title && true}>
-              <div>
-                <label style={{ fontWeight: 'bold' }}>Reseptin nimi</label>
-                {errors.title && validationErrorMsg(errors.title)}
-              </div>
-              <input
-                onChange={({ target }) => handleChange(target)}
-                name="title"
-                value={values.title}
-                placeholder="Reseptin nimi"
-                required />
-            </Form.Field>
+            <Grid stackable>
+              <Grid.Row columns={2}>
+                <Grid.Column width={10}>
+                  <Form.Field  width={8} error={errors.title && true}>
+                    <div>
+                      <label style={{ fontWeight: 'bold' }}>Reseptin nimi</label>
+                      {errors.title && validationErrorMsg(errors.title)}
+                    </div>
+                    <input
+                      onChange={({ target }) => handleChange(target)}
+                      name="title"
+                      value={values.title}
+                      placeholder="Reseptin nimi"
+                      required />
+                  </Form.Field>
 
-            <Form.Group grouped>
-              <table>
-                <tbody>
-                  {addedIngredients.length > 0 ? <tr><th>Ainesosa</th><th>Määrä</th></tr> : null}
-                  {addedIngredients}
-                </tbody>
-              </table>
-              {errors.ingredients && <div style={{ color: '#9f2a28', paddingBottom: '10px' }}>
-                <Icon color="yellow" name="exclamation triangle" /> {errors.ingredients}</div>}
-              <Button type="button" onClick={addIngredient} color="teal">Lisää uusi ainesosa</Button>
-            </Form.Group>
+                  <Form.Group grouped>
+                    <table>
+                      <tbody>
+                        {addedIngredients.length > 0 ? <tr><th>Ainesosa</th><th>Määrä</th></tr> : null}
+                        {addedIngredients}
+                      </tbody>
+                    </table>
+                    {errors.ingredients && <div style={{ color: '#9f2a28', paddingBottom: '10px' }}>
+                      <Icon color="yellow" name="exclamation triangle" /> {errors.ingredients}</div>}
+                    <Button type="button" onClick={addIngredient} color="teal" style={{ marginBottom: '10px' }}>Lisää uusi ainesosa</Button>
+                  </Form.Group>
+                </Grid.Column>
+
+                <Grid.Column width={6}>
+                  <Form.Field>
+                    <label>Kuva</label>
+                    <label htmlFor="image" style={{ maxWidth: '200px' }}>
+                      { imgFile
+                        ? <Image bordered rounded src={imgFile.preview} size="medium" style={{ maxWidth: '200px', maxHeight: '200px' }}/>
+                        : <Segment><Icon name="upload" /> Lataa kuva</Segment>
+                      }
+                    </label>
+                    <input
+                      style={{ opacity: 0, position: 'absolute', zIndex: -1 }}
+                      id="image"
+                      type="file"
+                      name="image"
+                      accept="image/*"
+                      onChange={({ target }) => handleImageChange(target) } />
+                  </Form.Field>
+                </Grid.Column>
+              </Grid.Row>
+            </Grid>
 
             <Form.Group>
               <Form.Field width={4} error={errors.servings && true}>
