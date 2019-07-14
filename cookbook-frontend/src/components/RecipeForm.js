@@ -48,6 +48,12 @@ const RecipeForm = (props) => {
       fieldErrors.category = 'Valitse reseptille kategoria';
     }
 
+    if (imgFile && (imgFile.file.size > 1000000)) {
+      fieldErrors.image = 'Kuvan koko voi olla enintään 1 MB';
+    } else if (imgFile && !['image/jpg', 'image/png', 'image/gif', 'image/jpeg'].includes(imgFile.file.type)) {
+      fieldErrors.image = 'Vain tietyt kuvatiedostot ovat tuettuja (jpg, jpeg, png, gif)';
+    }
+
     ingredients.forEach(ingredient => {
       const errorExists = fieldErrors.ingredientIds.includes(ingredient.id);
       if (ingredient.name.length === 0) {
@@ -176,6 +182,7 @@ const RecipeForm = (props) => {
 
   const handleImageChange = (target) => {
     const file = target.files[0];
+    setErrors({ ...errors, image: null });
     if(!file) return setImgFile(null);
     setImgFile({
       file,
@@ -233,8 +240,8 @@ const RecipeForm = (props) => {
                 </Grid.Column>
 
                 <Grid.Column width={6}>
-                  <Form.Field>
-                    <label>Kuva</label>
+                  <Form.Field error={errors.image && true}>
+                    <label>Kuva {errors.image && validationErrorMsg(errors.image)}</label>
                     <label htmlFor="image" style={{ maxWidth: '200px' }}>
                       { imgFile
                         ? <Image bordered rounded src={imgFile.preview} size="medium" style={{ maxWidth: '200px', maxHeight: '200px' }}/>
