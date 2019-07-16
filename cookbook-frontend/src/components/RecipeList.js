@@ -44,14 +44,14 @@ const RecipeList = ({ history, recipes, loggedUser }) => {
 
   const recipeList = sortRecipes(recipesToShow).map(recipe =>
     <Grid.Column key={recipe.id}>
-      <Card as={Link} to={`/recipes/${recipe.id}`} color="teal">
+      <Card as={Link} to={`/recipes/${recipe.id}`} color="teal" style={{ minHeight: '230px' }}>
         <div style={recipeCardStyle}>
           <Label size="large" style={{ backgroundColor: 'rgba(232, 232, 232, 0.8)' }}>
             <Icon name="heart" color="red"/>
             {recipe.likes || 0}
           </Label>
         </div>
-        <Image src={picture} />
+        <Image src={recipe.imgUrl || picture} style={{ maxHeight: '200px' }} />
         <Card.Content>
           <Card.Header>
             {recipe.title}

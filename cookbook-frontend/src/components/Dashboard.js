@@ -1,11 +1,9 @@
 import React from 'react';
 import { connect } from 'react-redux';
-import { Grid, Card, Image } from 'semantic-ui-react';
-import { Link } from 'react-router-dom';
-import picture from '../assets/default_picture.jpg';
+import { Grid, } from 'semantic-ui-react';
+import RecipeCard from '../components/RecipeCard';
 
 const Dashboard = ({ recipes }) => {
-  console.log(recipes);
 
   const getRandomRecipes = () => {
     let randomArray = [];
@@ -15,29 +13,15 @@ const Dashboard = ({ recipes }) => {
         randomArray.push(random);
       }
     }
-    return randomArray.map(random => recipeCard(recipes[random]));
+    return randomArray.map(random => RecipeCard(recipes[random]));
   };
 
   const getNewestRecipes = () => {
     let newestRecipes = new Array(4);
     for (let i = 0; i < newestRecipes.length; i++) {
-      newestRecipes[i] = recipeCard(recipes[recipes.length-i-1]);
+      newestRecipes[i] = RecipeCard(recipes[recipes.length-i-1]);
     }
     return newestRecipes;
-  };
-
-  const recipeCard = (recipe) => {
-    if (!recipe) return null;
-    return (
-      <Grid.Column key={recipe.id}>
-        <Card as={Link} to={`/recipes/${recipe.id}`} color="green">
-          <Image src={picture} />
-          <Card.Content>
-            <Card.Header style={{ overflow: 'hidden' }}>{recipe.title}</Card.Header>
-          </Card.Content>
-        </Card>
-      </Grid.Column>
-    );
   };
 
   return (

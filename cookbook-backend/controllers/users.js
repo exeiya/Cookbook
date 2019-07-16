@@ -7,10 +7,10 @@ const jwt = require('jsonwebtoken');
 usersRouter.get('/', async (req, res) => {
   const users = await User.find({})
     .populate('recipes', {
-      title: 1, category: 1, date: 1, id: 1
+      title: 1, category: 1, date: 1, imgUrl: 1
     })
     .populate('favoriteRecipes', {
-      title: 1, category: 1, date: 1, id: 1
+      title: 1, category: 1, date: 1, imgUrl: 1
     });
   res.json(users.map(user => user.toJSON()));
 });

@@ -1,32 +1,17 @@
 import React from 'react';
 import { connect } from 'react-redux';
-import { Tab, Card, Image, Grid } from 'semantic-ui-react';
-import picture from '../assets/default_picture.jpg';
-import { Link } from 'react-router-dom';
+import { Tab, Grid } from 'semantic-ui-react';
+import RecipeCard from '../components/RecipeCard';
 
 const User = ({ loggedUser, user, selectedTab }) => {
   if (!user) return null;
 
   const loggedUserProfile = loggedUser && loggedUser.id === user.id;
 
-  const recipeCard = (recipe) => {
-    if (!recipe) return null;
-    return (
-      <Grid.Column key={recipe.id}>
-        <Card as={Link} to={`/recipes/${recipe.id}`} color="teal">
-          <Image src={picture} />
-          <Card.Content>
-            <Card.Header style={{ overflow: 'hidden' }}>{recipe.title}</Card.Header>
-          </Card.Content>
-        </Card>
-      </Grid.Column>
-    );
-  };
-
   const recipeGrid = (recipes) => {
     return (
       <Grid padded columns={4}>
-        {recipes.map(recipe => recipeCard(recipe))}
+        {recipes.map(recipe => RecipeCard(recipe))}
       </Grid>
     );
   };
@@ -57,9 +42,8 @@ const User = ({ loggedUser, user, selectedTab }) => {
   );
 };
 
-
 export default connect(
   state => ({
-    loggedUser: state.loggedUser,
+    loggedUser: state.loggedUser
   })
 )(User);

@@ -37,7 +37,7 @@ const Recipe = (props) => {
       </Grid.Row>
       <Grid.Row columns={3}>
         <Grid.Column width={5}>
-          <Image src={picture} size="medium" rounded/>
+          <Image src={recipe.imgUrl || picture} size="medium" rounded style={{ maxHeight: '240px' }}/>
         </Grid.Column>
         <Grid.Column verticalAlign="bottom">
           <Button as="div" labelPosition="left">
