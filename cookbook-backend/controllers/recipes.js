@@ -6,9 +6,16 @@ const multer = require('multer');
 const cloudinary = require('cloudinary').v2;
 const Datauri = require('datauri');
 const config = require('../utils/config');
+const { InvalidFileType } = require('../utils/errors');
 
 const storage = multer.memoryStorage();
-const multerUploads = multer({ storage }).single('image');
+const fileFilter = (req, file, cb) => {
+  const acceptedTypes = /jpeg|jpg|png|gif/;
+  const mime = acceptedTypes.test(file.mimetype);
+  if (mime) return cb(null, true);
+  return cb(new InvalidFileType('File type not supported, only images with extensions jpeg, jpg, png and gif are accepted.'));
+};
+const multerUploads = multer({ storage, fileFilter, limits: { fileSize: 1000000 } }).single('image');
 
 cloudinary.config({
   cloud_name: 'cookiescloud',
@@ -44,6 +51,9 @@ recipesRouter.post('/', multerUploads, async (req, res, next) => {
     let newRecipe;
     if (contentType.startsWith('multipart/form-data')) {
       const dataUri = new Datauri();
+      if (!req.body.recipe) {
+        return res.status(400).json({ error: 'Missing recipe fields' });
+      }
       const recipe = JSON.parse(req.body.recipe);
       const {
         title,
