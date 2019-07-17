@@ -25,7 +25,8 @@ cloudinary.config({
 
 recipesRouter.get('/', async (req, res) => {
   const recipes = await Recipe.find({})
-    .populate('user', { username: 1 });
+    .populate('user', { username: 1 })
+    .populate('comments.user', { username: 1 });
   return res.json(recipes.map(recipe => recipe.toJSON()));
 });
 
@@ -141,6 +142,34 @@ recipesRouter.patch('/:id', async (req, res, next) => {
       .populate('user', { username: 1 });
     return res.json(updatedRecipe);
   } catch (error) {
+    next(error);
+  }
+});
+
+recipesRouter.post('/:id/comments', async (req, res, next) => {
+  try {
+    const decodedToken = jwt.verify(req.token, process.env.SECRET);
+    const user = await User.findById(decodedToken.id);
+
+    const comment = req.body.comment;
+    const id = req.params.id;
+    if (!comment) {
+      return res.status(400).json({ error: 'Missing required field comment' });
+    }
+    const newComment = {
+      content: comment,
+      user: user._id,
+      date: new Date()
+    };
+
+    const commentedRecipe = await Recipe.findById(id);
+    commentedRecipe.comments = commentedRecipe.comments.concat(newComment);
+    await commentedRecipe.save();
+    await commentedRecipe.populate('comments.user', { username: 1 }).execPopulate();
+
+    return res.json(commentedRecipe);
+  } catch (error) {
+    console.log(error);
     next(error);
   }
 });

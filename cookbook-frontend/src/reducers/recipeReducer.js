@@ -10,6 +10,12 @@ const recipeReducer = (state = [], action) => {
       const likedRecipe = action.data;
       return state.map(r => r.id === likedRecipe.id ? likedRecipe : r);
     }
+    case 'ADD_COMMENT': {
+      const recipe = action.data;
+      return state.map(r => r.id === recipe.id
+        ? { ...recipe, comments: recipe.comments }
+        : r);
+    }
     default:
       return state;
   }
@@ -41,6 +47,16 @@ export const likeRecipe = (recipe) => {
     dispatch({
       type: 'LIKE_RECIPE',
       data: likedRecipe
+    });
+  };
+};
+
+export const addComment = (recipe, comment) => {
+  return async dispatch => {
+    const updatedRecipe = await recipeService.addComment(recipe, comment);
+    dispatch({
+      type: 'ADD_COMMENT',
+      data: updatedRecipe
     });
   };
 };

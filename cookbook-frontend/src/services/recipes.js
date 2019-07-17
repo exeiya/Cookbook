@@ -26,4 +26,12 @@ const likeRecipe = async (recipe) => {
   return res.data;
 };
 
-export default { getAll, create, likeRecipe, setToken };
+const addComment = async (recipe, comment) => {
+  const config = { headers: { Authorization: token } };
+  const res = await axios.post(`${baseUrl}/${recipe.id}/comments`,
+    { comment }, config);
+  return res.data;
+};
+
+
+export default { getAll, create, likeRecipe, setToken, addComment };

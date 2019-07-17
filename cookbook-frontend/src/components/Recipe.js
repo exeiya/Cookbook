@@ -2,6 +2,7 @@ import React from 'react';
 import { connect } from 'react-redux';
 import { Table, Grid, Image, Icon, Label, Button } from 'semantic-ui-react';
 import { Link } from 'react-router-dom';
+import RecipeComments from '../components/RecipeComments';
 import picture from '../assets/default_picture.jpg';
 import { likeRecipe } from '../reducers/recipeReducer';
 import { favoriteRecipe } from '../reducers/userReducer';
@@ -90,6 +91,11 @@ const Recipe = (props) => {
           <p style={{ whiteSpace: 'pre-line' }}>
             {recipe.instructions}
           </p>
+        </Grid.Column>
+      </Grid.Row>
+      <Grid.Row columns={1}>
+        <Grid.Column width={16} style={{ marginTop: '20px' }}>
+          <RecipeComments recipe={recipe}/>
         </Grid.Column>
       </Grid.Row>
     </Grid>

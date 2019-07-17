@@ -10,6 +10,18 @@ const ingredientSchema = new mongoose.Schema({
   amount: String
 }, { _id: false });
 
+const commentSchema = new mongoose.Schema({
+  content: {
+    type: String,
+    required: true
+  },
+  user: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'User'
+  },
+  date: Date
+});
+
 const recipeSchema = new mongoose.Schema({
   title: {
     type: String,
@@ -37,7 +49,8 @@ const recipeSchema = new mongoose.Schema({
     type: mongoose.Schema.Types.ObjectId,
     ref: 'User'
   },
-  imgUrl: String
+  imgUrl: String,
+  comments: [commentSchema]
 });
 
 recipeSchema.set('toJSON', {
