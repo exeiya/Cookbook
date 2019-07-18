@@ -8,7 +8,7 @@ const RecipeCard = (recipe) => {
   return (
     <Grid.Column key={recipe.id}>
       <Card as={Link} to={`/recipes/${recipe.id}`} color="teal" style={{ minHeight: '210px' }}>
-        <Image src={recipe.imgUrl || picture} style={{ maxHeight: '170px' }}/>
+        <Image src={(recipe.img && recipe.img.url) ? recipe.img.url : picture} style={{ maxHeight: '170px' }}/>
         <Card.Content>
           <Card.Header style={{ overflow: 'hidden' }}>{recipe.title}</Card.Header>
         </Card.Content>

@@ -51,7 +51,7 @@ const RecipeList = ({ history, recipes, loggedUser }) => {
             {recipe.likes || 0}
           </Label>
         </div>
-        <Image src={recipe.imgUrl || picture} style={{ maxHeight: '200px' }} />
+        <Image src={(recipe.img && recipe.img.url) ? recipe.img.url : picture} style={{ maxHeight: '200px' }} />
         <Card.Content>
           <Card.Header>
             {recipe.title}
