@@ -33,5 +33,17 @@ const addComment = async (recipe, comment) => {
   return res.data;
 };
 
+const removeRecipe = async (recipeId) => {
+  const config = { headers: { Authorization: token } };
+  const res = await axios.delete(`${baseUrl}/${recipeId}`, config);
+  return res.data;
+}
 
-export default { getAll, create, likeRecipe, setToken, addComment };
+export default {
+  getAll,
+  create,
+  likeRecipe,
+  setToken,
+  addComment,
+  removeRecipe
+};

@@ -16,6 +16,10 @@ const recipeReducer = (state = [], action) => {
         ? { ...recipe, comments: recipe.comments }
         : r);
     }
+    case 'REMOVE_RECIPE': {
+      const removedRecipe = action.data;
+      return state.filter(r => r.id !== removedRecipe.id);
+    }
     default:
       return state;
   }
@@ -57,6 +61,16 @@ export const addComment = (recipe, comment) => {
     dispatch({
       type: 'ADD_COMMENT',
       data: updatedRecipe
+    });
+  };
+};
+
+export const removeRecipe = (recipe) => {
+  return async dispatch => {
+    await recipeService.removeRecipe(recipe.id);
+    dispatch({
+      type: 'REMOVE_RECIPE',
+      data: recipe
     });
   };
 };

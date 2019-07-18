@@ -1,16 +1,18 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { connect } from 'react-redux';
-import { Table, Grid, Image, Icon, Label, Button } from 'semantic-ui-react';
-import { Link } from 'react-router-dom';
+import { Table, Grid, Image, Icon, Label, Button, Modal } from 'semantic-ui-react';
+import { Link, withRouter } from 'react-router-dom';
 import RecipeComments from '../components/RecipeComments';
 import picture from '../assets/default_picture.jpg';
-import { likeRecipe } from '../reducers/recipeReducer';
+import { likeRecipe, removeRecipe } from '../reducers/recipeReducer';
 import { favoriteRecipe } from '../reducers/userReducer';
 import { openLoginModal } from '../reducers/loginModalReducer';
+import { notify } from '../reducers/notificationReducer';
 
 const Recipe = (props) => {
+  const [showRemoveModal, setShowRemoveModal] = useState(false);
   const { recipe, likeRecipe, favoriteRecipe,
-    loggedUser, isFavorited, openLoginModal } = props;
+    loggedUser, isFavorited, openLoginModal, removeRecipe } = props;
   if (!recipe) return null;
 
   const handleClick = () => ({ target }) => {
@@ -23,10 +25,41 @@ const Recipe = (props) => {
     }
   };
 
+  const removeRecipeModal = () => (
+    <Modal size="tiny" open={showRemoveModal} onClose={() => setShowRemoveModal(false)}>
+      <Modal.Header>Poistetaanko resepti?</Modal.Header>
+      <Modal.Content>
+        <p>Haluatko varmasti poistaa reseptin
+          <span style={{ fontWeight: 'bold' }}> {recipe.title}</span>?</p>
+        <p>Reseptiä ei voi palauttaa enää poistamisen jälkeen.</p>
+      </Modal.Content>
+      <Modal.Actions>
+        <Button onClick={() => setShowRemoveModal(false)}>Peruuta</Button>
+        <Button
+          color="red"
+          icon="trash alternate"
+          labelPosition="left"
+          content="Poista resepti"
+          onClick={handleRemove} />
+      </Modal.Actions>
+    </Modal>
+  );
+
+  const handleRemove = async () => {
+    try {
+      await removeRecipe(recipe);
+      props.history.push('/recipes');
+      props.notify(`Resepti "${recipe.title}" poistettu`, 'success');
+    } catch (e) {
+      console.log(e);
+    }
+  };
+
   return (
     <Grid stackable padded>
-      <Grid.Row>
-        <Grid.Column>
+      {removeRecipeModal()}
+      <Grid.Row columns={2}>
+        <Grid.Column width={12}>
           <h3>{recipe.title}</h3>
           {recipe.user
             ? <div>
@@ -35,10 +68,21 @@ const Recipe = (props) => {
             </div>
             : null}
         </Grid.Column>
+        <Grid.Column width={4}>
+          { (recipe.user && loggedUser && loggedUser.id === recipe.user.id)
+            ? <Button
+              icon="trash alternate"
+              color="red"
+              labelPosition="left"
+              content="Poista resepti"
+              onClick={() => setShowRemoveModal(true)}
+              style={{ float: 'right' }} />
+            : null}
+        </Grid.Column>
       </Grid.Row>
       <Grid.Row columns={3}>
         <Grid.Column width={5}>
-          <Image src={recipe.imgUrl || picture} size="medium" rounded style={{ maxHeight: '240px' }}/>
+          <Image src={recipe.img ? recipe.img.url : picture} size="medium" rounded style={{ maxHeight: '240px' }}/>
         </Grid.Column>
         <Grid.Column verticalAlign="bottom">
           <Button as="div" labelPosition="left">
@@ -117,5 +161,5 @@ export default connect(
     loggedUser: state.loggedUser,
     isFavorited: isFavorited(state.loggedUser, state.users, ownProps.recipe)
   }),
-  { likeRecipe, favoriteRecipe, openLoginModal }
-)(Recipe);
+  { likeRecipe, favoriteRecipe, openLoginModal, removeRecipe, notify }
+)(withRouter(Recipe));
