@@ -49,7 +49,10 @@ const recipeSchema = new mongoose.Schema({
     type: mongoose.Schema.Types.ObjectId,
     ref: 'User'
   },
-  imgUrl: String,
+  img: {
+    url: String,
+    id: String
+  },
   comments: [commentSchema]
 });
 

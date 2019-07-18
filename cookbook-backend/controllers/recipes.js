@@ -79,16 +79,25 @@ recipesRouter.post('/', multerUploads, async (req, res, next) => {
         date: new Date(),
         likes: 0,
         user: user._id,
-        imgUrl: null
+        img: {
+          url: null,
+          id: null
+        }
       });
       await newRecipe.validate();
 
-      let imgUrl = null;
+      let img = {
+        url: null,
+        id: null
+      };
       if (imgFile) {
         const imgUploadRes = await cloudinary.uploader.upload(imgFile);
-        imgUrl = imgUploadRes.url;
+        img = {
+          url: imgUploadRes.url,
+          id: imgUploadRes.public_id
+        };
       }
-      newRecipe.imgUrl = imgUrl;
+      newRecipe.img = img;
 
     } else if (contentType === 'application/json'){
       const {
@@ -112,7 +121,10 @@ recipesRouter.post('/', multerUploads, async (req, res, next) => {
         date: new Date(),
         likes: 0,
         user: user._id,
-        imgUrl: null
+        img: {
+          url: null,
+          id: null
+        }
       });
     }
 
@@ -169,7 +181,24 @@ recipesRouter.post('/:id/comments', async (req, res, next) => {
 
     return res.json(commentedRecipe);
   } catch (error) {
-    console.log(error);
+    next(error);
+  }
+});
+
+recipesRouter.delete('/:id', async (req, res, next) => {
+  try {
+    const decodedToken = jwt.verify(req.token, process.env.SECRET);
+    const recipe = await Recipe.findById(req.params.id);
+    if (recipe.user && (decodedToken.id === recipe.user.toString())) {
+      await Recipe.findByIdAndRemove(req.params.id);
+      if (recipe.img && recipe.img.url) {
+        await cloudinary.uploader.destroy(recipe.img.id);
+      }
+      return res.status(204).end();
+    } else {
+      return res.status(403).end();
+    }
+  } catch (error) {
     next(error);
   }
 });
