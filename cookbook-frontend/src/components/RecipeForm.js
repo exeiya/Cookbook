@@ -5,6 +5,7 @@ import { withRouter } from 'react-router-dom';
 import { Form, Button, Icon, Select, Input, Grid, Image, Segment } from 'semantic-ui-react';
 import { addRecipe } from '../reducers/recipeReducer';
 import { notify } from '../reducers/notificationReducer';
+import IngredientInputTable from './IngredientInputTable';
 
 const RecipeForm = (props) => {
   const [values, setValues] = useState({
@@ -18,10 +19,6 @@ const RecipeForm = (props) => {
   }]);
   const [ imgFile, setImgFile ] = useState();
   const [errors, setErrors] = useState({ ingredientIds: [] });
-
-  const validationErrorStyle = {
-    color: '#9f2a28'
-  };
 
   const categoryOptions = [
     { key: 'dinner', value: 'pääruoka', text: 'Pääruoka' },
@@ -118,68 +115,6 @@ const RecipeForm = (props) => {
     setErrors({ ...errors, [target.name]: null });
   };
 
-  const addIngredient = (event) => {
-    event.preventDefault();
-    setIngredients(ingredients.concat({
-      id: shortid.generate(),
-      name: '',
-      amount: ''
-    })
-    );
-  };
-
-  const handleIngredientChange = (field) => ({ target }) => {
-    setIngredients(
-      ingredients.map((ingredient) => ingredient.id === target.name
-        ? { ...ingredient, [field]: target.value }
-        : ingredient
-      )
-    );
-    setErrors({ ...errors,
-      ingredientIds: errors.ingredientIds.filter(val => val !== target.name),
-      ingredients: null });
-  };
-
-  const removeIngredient = (id) => () => {
-    setIngredients(ingredients.filter(ingredient => ingredient.id !== id));
-    setErrors({ ...errors,
-      ingredientIds: errors.ingredientIds.filter(val => val !== id),
-      ingredients: null });
-  };
-
-  const addedIngredients = ingredients.map((ingredient) => {
-    const error = errors.ingredientIds.includes(ingredient.id) && true;
-    return (
-      <tr key={ingredient.id}>
-        <td>
-          <Form.Field error={error}>
-            <input
-              value={ingredient.name}
-              name={ingredient.id}
-              onChange={handleIngredientChange('name')}
-              placeholder="Ainesosan nimi"
-            />
-          </Form.Field>
-        </td>
-        <td>
-          <Form.Field error={error}>
-            <input
-              value={ingredient.amount}
-              name={ingredient.id}
-              onChange={handleIngredientChange('amount')}
-              placeholder="Ainesosan määrä"
-            />
-          </Form.Field>
-        </td>
-        <td>
-          {ingredients.length > 1
-            ? <Button color="orange" type="button" onClick={removeIngredient(ingredient.id)}>Poista</Button>
-            : null}
-        </td>
-      </tr>
-    );
-  });
-
   const handleImageChange = (target) => {
     const file = target.files[0];
     setErrors({ ...errors, image: null });
@@ -191,12 +126,17 @@ const RecipeForm = (props) => {
     });
   };
 
-  const validationErrorMsg = (msg) => (
-    <div style={validationErrorStyle}>
-      <Icon color="yellow" name="exclamation triangle" />
-      {msg}
-    </div>
-  );
+  const showError = (field) => {
+    if (errors[field]) {
+      return (
+        <div style={{ padding: '5px' }}>
+          <Icon color="yellow" name="exclamation triangle" />
+          {errors[field]}
+        </div>
+      );
+    }
+    return null;
+  };
 
   return (
     <Grid>
@@ -216,7 +156,7 @@ const RecipeForm = (props) => {
                   <Form.Field  width={8} error={errors.title && true}>
                     <div>
                       <label style={{ fontWeight: 'bold' }}>Reseptin nimi</label>
-                      {errors.title && validationErrorMsg(errors.title)}
+                      {errors.title && showError('title')}
                     </div>
                     <input
                       onChange={({ target }) => handleChange(target)}
@@ -225,24 +165,13 @@ const RecipeForm = (props) => {
                       placeholder="Reseptin nimi"
                       required />
                   </Form.Field>
-
-                  <Form.Group grouped>
-                    <table>
-                      <tbody>
-                        {addedIngredients.length > 0 ? <tr><th>Ainesosa</th><th>Määrä</th></tr> : null}
-                        {addedIngredients}
-                      </tbody>
-                    </table>
-                    {errors.ingredients && <div style={{ color: '#9f2a28', paddingBottom: '10px' }}>
-                      <Icon color="yellow" name="exclamation triangle" /> {errors.ingredients}</div>}
-                    <Button type="button" onClick={addIngredient} color="teal" style={{ marginBottom: '10px' }}>Lisää uusi ainesosa</Button>
-                  </Form.Group>
+                  <IngredientInputTable ingredients={ingredients} setIngredients={setIngredients} errors={errors} setErrors={setErrors} />
                 </Grid.Column>
 
                 <Grid.Column width={6}>
                   <Form.Field error={errors.image && true}>
-                    <label>Kuva {errors.image && validationErrorMsg(errors.image)}</label>
-                    <label htmlFor="image" style={{ maxWidth: '200px' }}>
+                    <label>Kuva {errors.image && showError('image')}</label>
+                    <label htmlFor="image" style={{ maxWidth: '200px', cursor: 'pointer' }}>
                       { imgFile
                         ? <Image bordered rounded src={imgFile.preview} size="medium" style={{ maxWidth: '200px', maxHeight: '200px' }}/>
                         : <Segment><Icon name="upload" /> Lataa kuva</Segment>
@@ -302,14 +231,14 @@ const RecipeForm = (props) => {
                 options={categoryOptions}
               />
             </Form.Group>
-            {errors.servings && validationErrorMsg(errors.servings)}
-            {errors.cookingTime && validationErrorMsg(errors.cookingTime)}
-            {errors.category && validationErrorMsg(errors.category)}
+            {errors.servings && showError('servings')}
+            {errors.cookingTime && showError('cookingTime')}
+            {errors.category && showError('category')}
 
             <Form.Field error={errors.instructions && true} >
               <div>
                 <label style={{ fontWeight: 'bold' }}>Ohjeet</label>
-                {errors.instructions && validationErrorMsg(errors.instructions)}
+                {errors.instructions && showError('instructions')}
               </div>
               <textarea
                 onChange={({ target }) => handleChange(target)}
