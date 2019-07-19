@@ -6,11 +6,12 @@ const jwt = require('jsonwebtoken');
 
 usersRouter.get('/', async (req, res) => {
   const users = await User.find({})
+    .sort({ joinedAt: -1 })
     .populate('recipes', {
-      title: 1, category: 1, date: 1, imgUrl: 1
+      title: 1, category: 1, date: 1, img: 1
     })
     .populate('favoriteRecipes', {
-      title: 1, category: 1, date: 1, imgUrl: 1
+      title: 1, category: 1, date: 1, img: 1
     });
   res.json(users.map(user => user.toJSON()));
 });
@@ -33,7 +34,9 @@ usersRouter.post('/', async (req, res, next) => {
     const newUser = new User({
       username,
       passwordHash,
-      recipes: []
+      recipes: [],
+      favoriteRecipes: [],
+      joinedAt: new Date()
     });
 
     const savedUser = await newUser.save();

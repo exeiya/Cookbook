@@ -12,7 +12,6 @@ const userSchema = new mongoose.Schema({
     validate: /^[a-zA-Z0-9_]*$/
   },
   passwordHash: String,
-  email: String,
   recipes: [{
     type: mongoose.Schema.Types.ObjectId,
     ref: 'Recipe'
@@ -20,7 +19,8 @@ const userSchema = new mongoose.Schema({
   favoriteRecipes: [{
     type: mongoose.Schema.Types.ObjectId,
     ref: 'Recipe'
-  }]
+  }],
+  joinedAt: Date
 });
 
 userSchema.plugin(uniqueValidator);
