@@ -37,7 +37,13 @@ const removeRecipe = async (recipeId) => {
   const config = { headers: { Authorization: token } };
   const res = await axios.delete(`${baseUrl}/${recipeId}`, config);
   return res.data;
-}
+};
+
+const update = async (recipe) => {
+  const config = { headers: { Authorization: token } };
+  const res = await axios.put(`${baseUrl}/${recipe.id}`, recipe, config);
+  return res.data;
+};
 
 export default {
   getAll,
@@ -45,5 +51,6 @@ export default {
   likeRecipe,
   setToken,
   addComment,
-  removeRecipe
+  removeRecipe,
+  update
 };

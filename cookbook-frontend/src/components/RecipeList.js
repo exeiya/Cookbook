@@ -76,7 +76,7 @@ const RecipeList = ({ history, recipes, loggedUser }) => {
         </Button>
       </Grid.Column>
       <Grid.Column width={3}>
-        <Button as={Link} to="/createNewRecipe" color="green"><Icon name="plus"/>Luo uusi resepti</Button>
+        <Button as={Link} to="/recipes/create" color="green"><Icon name="plus"/>Luo uusi resepti</Button>
       </Grid.Column>
     </Grid.Row>
   );

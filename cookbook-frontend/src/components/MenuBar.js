@@ -28,7 +28,7 @@ const MenuBar = (props) => {
             <Dropdown.Item as={Link} to={`/users/${props.loggedUser.id}`}>
               Oma profiili
             </Dropdown.Item>
-            <Dropdown.Item as={Link} to="/createNewRecipe">
+            <Dropdown.Item as={Link} to="/recipes/create">
               Luo uusi resepti
             </Dropdown.Item>
             <Dropdown.Item onClick={() => props.logout()}>

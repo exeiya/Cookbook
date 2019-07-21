@@ -1,4 +1,5 @@
 import recipeService from '../services/recipes';
+import { notify } from '../reducers/notificationReducer';
 
 const recipeReducer = (state = [], action) => {
   switch (action.type) {
@@ -20,6 +21,11 @@ const recipeReducer = (state = [], action) => {
       const removedRecipe = action.data;
       return state.filter(r => r.id !== removedRecipe.id);
     }
+    case 'UPDATE_RECIPE': {
+      const updatedRecipe = action.data;
+      return state.map(r => r.id === updatedRecipe.id
+        ? updatedRecipe : r);
+    }
     default:
       return state;
   }
@@ -37,11 +43,19 @@ export const initializeRecipes = () => {
 
 export const addRecipe = (recipe) => {
   return async dispatch => {
-    const newRecipe = await recipeService.create(recipe);
-    dispatch({
-      type: 'ADD_RECIPE',
-      data: newRecipe
-    });
+    try {
+      const newRecipe = await recipeService.create(recipe);
+      dispatch({
+        type: 'ADD_RECIPE',
+        data: newRecipe
+      });
+      dispatch(notify(`Uusi resepti '${newRecipe.title}' lisätty!`, 'success'));
+      return true;
+    } catch (error) {
+      console.log(error);
+      dispatch(notify('Virhe reseptin luonnissa! Uutta reseptiä ei luotu.', 'error'));
+      return false;
+    }
   };
 };
 
@@ -72,6 +86,24 @@ export const removeRecipe = (recipe) => {
       type: 'REMOVE_RECIPE',
       data: recipe
     });
+  };
+};
+
+export const updateRecipe = (recipe) => {
+  return async dispatch => {
+    try {
+      const updatedRecipe = await recipeService.update(recipe);
+      dispatch({
+        type: 'UPDATE_RECIPE',
+        data: updatedRecipe
+      });
+      dispatch(notify(`Reseptin ${updatedRecipe.title} muutokset tallennettu!`, 'success'));
+      return true;
+    } catch (error) {
+      console.log(error);
+      dispatch(notify('Reseptin muokkaaminen ei onnistunut, muutoksia ei tallennettu', 'error'));
+      return false;
+    }
   };
 };
 

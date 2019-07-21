@@ -2,7 +2,8 @@ import React, { useEffect } from 'react';
 import { connect } from 'react-redux';
 import { BrowserRouter as Router, Route, Redirect } from 'react-router-dom';
 import { Container } from 'semantic-ui-react';
-import RecipeForm from './components/RecipeForm';
+import CreateRecipe from './components/CreateRecipe';
+import ModifyRecipe from './components/ModifyRecipe';
 import RecipeList from './components/RecipeList';
 import Recipe from './components/Recipe';
 import Notification from './components/Notification';
@@ -58,9 +59,10 @@ function App(props) {
         <Notification />
         <Route exact path="/" render={() => <Dashboard />} />
         <Route exact path="/recipes" render={() => <RecipeList />} />
-        <Route path="/createNewRecipe" render={() => (
-          props.loggedUser ? <RecipeForm /> : showLoginModal())}  />
+        <Route exact path="/recipes/create" render={() => (
+          props.loggedUser ? <CreateRecipe /> : showLoginModal())}  />
         <Route exact path="/recipes/:id" render={({ match }) => <Recipe recipe={recipeById(match.params.id)}/>} />
+        <Route exact path="/recipes/:id/update" render={({ match }) => <ModifyRecipe recipe={recipeById(match.params.id)}/>} />
         <Route exact path="/users" render={() => <Users />} />
         <Route exact path="/users/:id" render={({ match, location }) =>
           <User user={userById(match.params.id)} selectedTab={location.state} />} />

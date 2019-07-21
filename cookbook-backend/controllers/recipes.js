@@ -79,10 +79,7 @@ recipesRouter.post('/', multerUploads, async (req, res, next) => {
         date: new Date(),
         likes: 0,
         user: user._id,
-        img: {
-          url: null,
-          id: null
-        }
+        img: null
       });
       await newRecipe.validate();
 
@@ -99,7 +96,7 @@ recipesRouter.post('/', multerUploads, async (req, res, next) => {
       }
       newRecipe.img = img;
 
-    } else if (contentType === 'application/json'){
+    } else if (contentType.startsWith('application/json')){
       const {
         title,
         instructions,
@@ -121,10 +118,7 @@ recipesRouter.post('/', multerUploads, async (req, res, next) => {
         date: new Date(),
         likes: 0,
         user: user._id,
-        img: {
-          url: null,
-          id: null
-        }
+        img: null
       });
     }
 
@@ -132,7 +126,7 @@ recipesRouter.post('/', multerUploads, async (req, res, next) => {
 
     user.recipes = user.recipes.concat(savedRecipe._id);
     await user.save();
-
+    await savedRecipe.populate('user', { username: 1 }).execPopulate();
     return res.status(201).json(savedRecipe.toJSON());
   } catch (error) {
     next(error);
@@ -199,6 +193,41 @@ recipesRouter.delete('/:id', async (req, res, next) => {
       return res.status(403).end();
     }
   } catch (error) {
+    next(error);
+  }
+});
+
+recipesRouter.put('/:id', async (req, res, next) => {
+  try {
+    const decodedToken = jwt.verify(req.token, process.env.SECRET);
+    const recipe = await Recipe.findById(req.params.id);
+    if (recipe.user && (decodedToken.id === recipe.user.toString())) {
+      const {
+        title,
+        instructions,
+        category,
+        ingredients,
+        servings,
+        cookingTime,
+        img,
+      } = req.body;
+      const updatedRecipe = await Recipe.findByIdAndUpdate(recipe._id, {
+        title,
+        instructions,
+        category,
+        ingredients,
+        servings,
+        cookingTime,
+        img }, { new: true });
+      await updatedRecipe.populate('user', { username: 1 }).execPopulate();
+      console.log(updatedRecipe);
+
+      return res.json(updatedRecipe);
+    }
+
+    return res.status(403).end();
+  } catch (error) {
+    console.log(error);
     next(error);
   }
 });

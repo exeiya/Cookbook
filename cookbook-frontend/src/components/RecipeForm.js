@@ -2,21 +2,23 @@ import React, { useState } from 'react';
 import { connect } from 'react-redux';
 import shortid from 'shortid';
 import { withRouter } from 'react-router-dom';
-import { Form, Button, Icon, Select, Input, Grid, Image, Segment } from 'semantic-ui-react';
-import { addRecipe } from '../reducers/recipeReducer';
-import { notify } from '../reducers/notificationReducer';
+import { Form, Icon, Select, Input, Grid, Image, Segment } from 'semantic-ui-react';
 import IngredientInputTable from './IngredientInputTable';
 
 const RecipeForm = (props) => {
-  const [values, setValues] = useState({
-    title: '',
-    instructions: ''
-  });
-  const [ingredients, setIngredients] = useState([{
-    id: shortid.generate(),
-    name: '',
-    amount: ''
-  }]);
+  const [values, setValues] = useState(props.values
+    ? { ...props.values,
+      cookingTime: props.values.cookingTime ? props.values.cookingTime.split(' ')[0] : null,
+      cookingTimeUnit: props.values.cookingTime ? props.values.cookingTime.split(' ')[1] : null }
+    : { title: '', instructions: '' });
+  const [ingredients, setIngredients] = useState(
+    props.values ? props.values.ingredients.map(i => ({ ...i, id: shortid.generate() })) :
+      [{
+        id: shortid.generate(),
+        name: '',
+        amount: ''
+      }]
+  );
   const [ imgFile, setImgFile ] = useState();
   const [errors, setErrors] = useState({ ingredientIds: [] });
 
@@ -75,9 +77,10 @@ const RecipeForm = (props) => {
     return isValid;
   };
 
-  const addRecipe = async (event) => {
+  const handleSubmit = async (event) => {
+    console.log(values)
     event.preventDefault();
-    const newRecipe = {
+    /*const recipe = {
       title: values.title,
       ingredients: ingredients
         .map(ingredient => {
@@ -87,30 +90,37 @@ const RecipeForm = (props) => {
       category: values.category,
       cookingTime: null,
       servings: values.servings || null
+    };*/
+    const recipe = {
+      ...values,
+      ingredients: ingredients
+        .map(ingredient => {
+          return ({ name: ingredient.name, amount: ingredient.amount });
+        }),
     };
 
     if(values.cookingTime) {
-      newRecipe.cookingTime = `${values.cookingTime} ${values.cookingTimeUnit || cookingTimeOptions[0].value}`;
+      recipe.cookingTime = `${values.cookingTime} ${values.cookingTimeUnit || cookingTimeOptions[0].value}`;
     }
 
     if (validateFields()) {
-      const recipeData = new FormData();
-      if (imgFile) recipeData.append('image', imgFile.file);
-      recipeData.append('recipe', JSON.stringify(newRecipe));
-      try {
-        await props.addRecipe(recipeData);
-        setValues({ title: '', instructions: '' });
-        setIngredients([]);
-        props.notify(`Uusi resepti '${newRecipe.title}' lisätty!`, 'success');
+      let recipeData;
+      if (imgFile) {
+        recipeData = new FormData();
+        recipeData.append('image', imgFile.file);
+        recipeData.append('recipe', JSON.stringify(recipe));
+      } else {
+        recipeData = recipe;
+      }
+      const submitted = await props.onSubmit(recipeData);
+      if (submitted) {
         props.history.push('/');
-      } catch (e) {
-        console.log(e);
-        props.notify('Virhe reseptin luonnissa! Uutta reseptiä ei luotu.', 'error');
       }
     }
   };
 
   const handleChange = (target) => {
+    console.log(target.name);
     setValues({ ...values, [target.name]: target.value });
     setErrors({ ...errors, [target.name]: null });
   };
@@ -138,126 +148,129 @@ const RecipeForm = (props) => {
     return null;
   };
 
+  const previewImage = () => {
+    let imgSrc = null;
+    if (!imgFile && values.img) {
+      imgSrc = values.img.url;
+    } else if (imgFile) {
+      imgSrc = imgFile.preview;
+    }
+
+    if (imgSrc) {
+      return (
+        <Image bordered rounded src={imgSrc} size="medium" style={{ maxWidth: '200px', maxHeight: '200px' }}/>
+      );
+    }
+
+    return (
+      <Segment><Icon name="upload" /> Lataa kuva</Segment>
+    );
+  };
+
   return (
-    <Grid>
-      <Grid.Row columns={1}>
-        <Grid.Column>
-          <div style={{ textAlign: 'center' }}>
-            <h2>Luo uusi resepti</h2>
-          </div>
-        </Grid.Column>
-      </Grid.Row>
-      <Grid.Row columns={1} centered>
-        <Grid.Column width={12}>
-          <Form onSubmit={addRecipe} noValidate>
-            <Grid stackable>
-              <Grid.Row columns={2}>
-                <Grid.Column width={10}>
-                  <Form.Field  width={8} error={errors.title && true}>
-                    <div>
-                      <label style={{ fontWeight: 'bold' }}>Reseptin nimi</label>
-                      {errors.title && showError('title')}
-                    </div>
-                    <input
-                      onChange={({ target }) => handleChange(target)}
-                      name="title"
-                      value={values.title}
-                      placeholder="Reseptin nimi"
-                      required />
-                  </Form.Field>
-                  <IngredientInputTable ingredients={ingredients} setIngredients={setIngredients} errors={errors} setErrors={setErrors} />
-                </Grid.Column>
+    <Grid.Row columns={1} centered>
+      <Grid.Column width={12}>
+        <Form onSubmit={handleSubmit} noValidate>
+          <Grid stackable>
+            <Grid.Row columns={2}>
+              <Grid.Column width={10}>
+                <Form.Field  width={8} error={errors.title && true}>
+                  <label>Reseptin nimi</label>
+                  {errors.title && showError('title')}
+                  <input
+                    onChange={({ target }) => handleChange(target)}
+                    name="title"
+                    value={values.title}
+                    placeholder="Reseptin nimi"
+                    required />
+                </Form.Field>
+                <IngredientInputTable ingredients={ingredients} setIngredients={setIngredients} errors={errors} setErrors={setErrors} />
+              </Grid.Column>
 
-                <Grid.Column width={6}>
-                  <Form.Field error={errors.image && true}>
-                    <label>Kuva {errors.image && showError('image')}</label>
-                    <label htmlFor="image" style={{ maxWidth: '200px', cursor: 'pointer' }}>
-                      { imgFile
-                        ? <Image bordered rounded src={imgFile.preview} size="medium" style={{ maxWidth: '200px', maxHeight: '200px' }}/>
-                        : <Segment><Icon name="upload" /> Lataa kuva</Segment>
-                      }
-                    </label>
-                    <input
-                      style={{ opacity: 0, position: 'absolute', zIndex: -1 }}
-                      id="image"
-                      type="file"
-                      name="image"
-                      accept="image/*"
-                      onChange={({ target }) => handleImageChange(target) } />
-                  </Form.Field>
-                </Grid.Column>
-              </Grid.Row>
-            </Grid>
+              <Grid.Column width={6}>
+                <Form.Field error={errors.image && true}>
+                  <label>Kuva {errors.image && showError('image')}</label>
+                  <label htmlFor="image" style={{ maxWidth: '200px', cursor: 'pointer' }}>
+                    {previewImage()}
+                  </label>
+                  <input
+                    style={{ opacity: 0, position: 'absolute', zIndex: -1 }}
+                    id="image"
+                    type="file"
+                    name="image"
+                    accept="image/*"
+                    onChange={({ target }) => handleImageChange(target) } />
+                </Form.Field>
+              </Grid.Column>
+            </Grid.Row>
+          </Grid>
 
-            <Form.Group>
-              <Form.Field width={4} error={errors.servings && true}>
-                <label>Annosmäärä</label>
-                <Input
-                  onChange={({ target }) => handleChange(target)}
-                  name="servings"
-                  label={{ basic: true, content: 'annosta' }}
-                  labelPosition="right"
-                  type="number"
-                  min="0"
-                />
-              </Form.Field>
-              <Form.Field width={4} error={errors.cookingTime && true}>
-                <label>Valmistusaika</label>
-                <Input
-                  onChange={({ target }) => handleChange(target)}
-                  name="cookingTime"
-                  type="number"
-                  min="0"
-                  action>
-                  <input />
-                  <Select
-                    compact
-                    options={cookingTimeOptions}
-                    defaultValue={cookingTimeOptions[0].value}
-                    name="cookingTimeUnit"
-                    onChange={(e, target) => handleChange(target)}
-                  />
-                </Input>
-              </Form.Field>
-              <Form.Select
-                onChange={(e, { value }) => setValues({ ...values, category: value })}
-                onClick={() => setErrors({ ...errors, category: null })}
-                error={errors.category && true}
-                width={4}
-                name="category"
-                fluid
-                label="Reseptin tyyppi"
-                placeholder="Reseptin tyyppi"
-                options={categoryOptions}
-              />
-            </Form.Group>
-            {errors.servings && showError('servings')}
-            {errors.cookingTime && showError('cookingTime')}
-            {errors.category && showError('category')}
-
-            <Form.Field error={errors.instructions && true} >
-              <div>
-                <label style={{ fontWeight: 'bold' }}>Ohjeet</label>
-                {errors.instructions && showError('instructions')}
-              </div>
-              <textarea
+          <Form.Group>
+            <Form.Field width={4} error={errors.servings && true}>
+              <label>Annosmäärä</label>
+              <Input
                 onChange={({ target }) => handleChange(target)}
-                name="instructions" value={values.instructions}
-                placeholder="Kirjoita reseptin ohje tähän"
-                required
+                name="servings"
+                label={{ basic: true, content: 'annosta' }}
+                labelPosition="right"
+                type="number"
+                min="0"
+                value={values.servings || ''}
               />
             </Form.Field>
-            <div style={{ textAlign: 'center' }}>
-              <Button positive>Lisää resepti</Button>
-            </div>
-          </Form>
-        </Grid.Column>
-      </Grid.Row>
-    </Grid>
+            <Form.Field width={4} error={errors.cookingTime && true}>
+              <label>Valmistusaika</label>
+              <Input
+                onChange={({ target }) => handleChange(target)}
+                name="cookingTime"
+                type="number"
+                min="0"
+                value={values.cookingTime || ''}
+                action>
+                <input />
+                <Select
+                  compact
+                  options={cookingTimeOptions}
+                  defaultValue={cookingTimeOptions[0].value}
+                  name="cookingTimeUnit"
+                  onChange={(e, target) => handleChange(target)}
+                />
+              </Input>
+            </Form.Field>
+            <Form.Select
+              onChange={(e, { value }) => setValues({ ...values, category: value })}
+              onClick={() => setErrors({ ...errors, category: null })}
+              error={errors.category && true}
+              width={4}
+              name="category"
+              fluid
+              label="Reseptin tyyppi"
+              placeholder="Reseptin tyyppi"
+              defaultValue={values.category}
+              options={categoryOptions}
+            />
+          </Form.Group>
+          {errors.servings && showError('servings')}
+          {errors.cookingTime && showError('cookingTime')}
+          {errors.category && showError('category')}
+
+          <Form.Field error={errors.instructions && true} >
+            <label>Ohjeet</label>
+            {errors.instructions && showError('instructions')}
+            <textarea
+              onChange={({ target }) => handleChange(target)}
+              name="instructions" value={values.instructions}
+              placeholder="Kirjoita reseptin ohje tähän"
+              required
+            />
+          </Form.Field>
+          <div style={{ textAlign: 'center' }}>
+            {props.submitButton}
+          </div>
+        </Form>
+      </Grid.Column>
+    </Grid.Row>
   );
 };
 
-export default connect(
-  null,
-  { addRecipe, notify }
-)(withRouter(RecipeForm));
+export default connect()(withRouter(RecipeForm));
