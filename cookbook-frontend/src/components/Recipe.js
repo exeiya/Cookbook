@@ -55,6 +55,32 @@ const Recipe = (props) => {
     }
   };
 
+  const showRecipeOwnerOptions = () => {
+    if (recipe.user && loggedUser && loggedUser.id === recipe.user.id) {
+      return (
+        <>
+        <Button
+          icon="edit"
+          color="blue"
+          labelPosition="left"
+          content="Muokkaa reseptiä"
+          onClick={() => props.history.push(`/recipes/${recipe.id}/update`)}
+        />
+          <div style={{ paddingTop: '5px' }}>
+            <Button
+              icon="trash alternate"
+              color="red"
+              labelPosition="left"
+              content="Poista resepti"
+              onClick={() => setShowRemoveModal(true)}
+            />
+          </div>
+        </>
+      );
+    }
+    return null;
+  };
+
   return (
     <Grid stackable padded>
       {removeRecipeModal()}
@@ -69,15 +95,7 @@ const Recipe = (props) => {
             : null}
         </Grid.Column>
         <Grid.Column width={4}>
-          { (recipe.user && loggedUser && loggedUser.id === recipe.user.id)
-            ? <Button
-              icon="trash alternate"
-              color="red"
-              labelPosition="left"
-              content="Poista resepti"
-              onClick={() => setShowRemoveModal(true)}
-              style={{ float: 'right' }} />
-            : null}
+          {showRecipeOwnerOptions()}
         </Grid.Column>
       </Grid.Row>
       <Grid.Row columns={3}>
