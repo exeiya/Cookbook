@@ -197,30 +197,68 @@ recipesRouter.delete('/:id', async (req, res, next) => {
   }
 });
 
-recipesRouter.put('/:id', async (req, res, next) => {
+recipesRouter.put('/:id', multerUploads, async (req, res, next) => {
+  const contentType = req.headers['content-type'];
   try {
     const decodedToken = jwt.verify(req.token, process.env.SECRET);
     const recipe = await Recipe.findById(req.params.id);
     if (recipe.user && (decodedToken.id === recipe.user.toString())) {
-      const {
-        title,
-        instructions,
-        category,
-        ingredients,
-        servings,
-        cookingTime,
-        img,
-      } = req.body;
-      const updatedRecipe = await Recipe.findByIdAndUpdate(recipe._id, {
-        title,
-        instructions,
-        category,
-        ingredients,
-        servings,
-        cookingTime,
-        img }, { new: true });
+      let newRecipe;
+      if (contentType.startsWith('multipart/form-data')) {
+        const dataUri = new Datauri();
+        if (!req.body.recipe) {
+          return res.status(400).json({ error: 'Missing recipe fields' });
+        }
+        const { title, instructions, category, ingredients,
+          servings, cookingTime, img } = JSON.parse(req.body.recipe);
+
+        const imgFile = req.file
+          ? dataUri.format(req.file.originalname, req.file.buffer).content
+          : null;
+
+        const recipeToValidate = new Recipe({
+          title,
+          instructions,
+          category,
+          ingredients: ingredients ? ingredients.map(ingredient =>
+            ({ name: ingredient.name, amount: ingredient.amount || '' })
+          ) : null,
+          servings,
+          cookingTime,
+          user: recipe.user
+        });
+        await recipeToValidate.validate();
+
+        let newImg = null;
+        if (imgFile) {
+          const imgUploadRes = await cloudinary.uploader.upload(imgFile);
+          newImg = {
+            url: imgUploadRes.url,
+            id: imgUploadRes.public_id
+          };
+        } else if ((img === null) && recipe.img && recipe.img.id) {
+          await cloudinary.uploader.destroy(recipe.img.id);
+          newImg = { url: null, id: null };
+        }
+        newRecipe = { title, instructions, category, ingredients,
+          servings, cookingTime, img: newImg ? newImg : recipe.img };
+      } else if (contentType.startsWith('application/json')) {
+        const { title, instructions, category, ingredients,
+          servings, cookingTime } = req.body;
+        newRecipe = { title, instructions, category, ingredients,
+          servings, cookingTime };
+
+        if (req.body.img === null && recipe.img && recipe.img.id) {
+          await cloudinary.uploader.destroy(recipe.img.id);
+          newRecipe.img = { url: null, id: null };
+        } else {
+          newRecipe.img = recipe.img;
+        }
+      }
+
+      const updatedRecipe = await Recipe.findByIdAndUpdate(recipe._id,
+        newRecipe, { runValidators: true, new: true });
       await updatedRecipe.populate('user', { username: 1 }).execPopulate();
-      console.log(updatedRecipe);
 
       return res.json(updatedRecipe);
     }

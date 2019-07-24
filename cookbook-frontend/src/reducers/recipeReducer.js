@@ -89,10 +89,10 @@ export const removeRecipe = (recipe) => {
   };
 };
 
-export const updateRecipe = (recipe) => {
+export const updateRecipe = (recipe, id) => {
   return async dispatch => {
     try {
-      const updatedRecipe = await recipeService.update(recipe);
+      const updatedRecipe = await recipeService.update(recipe, id);
       dispatch({
         type: 'UPDATE_RECIPE',
         data: updatedRecipe

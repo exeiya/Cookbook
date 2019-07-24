@@ -39,9 +39,9 @@ const removeRecipe = async (recipeId) => {
   return res.data;
 };
 
-const update = async (recipe) => {
+const update = async (recipe, recipeId) => {
   const config = { headers: { Authorization: token } };
-  const res = await axios.put(`${baseUrl}/${recipe.id}`, recipe, config);
+  const res = await axios.put(`${baseUrl}/${recipeId}`, recipe, config);
   return res.data;
 };
 

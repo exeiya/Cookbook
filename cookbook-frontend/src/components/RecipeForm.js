@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { connect } from 'react-redux';
 import shortid from 'shortid';
 import { withRouter } from 'react-router-dom';
-import { Form, Icon, Select, Input, Grid, Image, Segment } from 'semantic-ui-react';
+import { Form, Icon, Select, Input, Grid, Image, Segment, Button } from 'semantic-ui-react';
 import IngredientInputTable from './IngredientInputTable';
 
 const RecipeForm = (props) => {
@@ -78,19 +78,7 @@ const RecipeForm = (props) => {
   };
 
   const handleSubmit = async (event) => {
-    console.log(values)
     event.preventDefault();
-    /*const recipe = {
-      title: values.title,
-      ingredients: ingredients
-        .map(ingredient => {
-          return ({ name: ingredient.name, amount: ingredient.amount });
-        }),
-      instructions: values.instructions,
-      category: values.category,
-      cookingTime: null,
-      servings: values.servings || null
-    };*/
     const recipe = {
       ...values,
       ingredients: ingredients
@@ -112,7 +100,13 @@ const RecipeForm = (props) => {
       } else {
         recipeData = recipe;
       }
-      const submitted = await props.onSubmit(recipeData);
+      let submitted;
+      if (props.values) {
+        submitted = await props.onSubmit(recipeData, props.values.id);
+      } else {
+        submitted = await props.onSubmit(recipeData);
+      }
+
       if (submitted) {
         props.history.push('/');
       }
@@ -148,7 +142,12 @@ const RecipeForm = (props) => {
     return null;
   };
 
-  const previewImage = () => {
+  const removeImage = () => {
+    setImgFile(null);
+    if (values.img) setValues({ ...values, img: null });
+  };
+
+  const imageField = () => {
     let imgSrc = null;
     if (!imgFile && values.img) {
       imgSrc = values.img.url;
@@ -156,14 +155,24 @@ const RecipeForm = (props) => {
       imgSrc = imgFile.preview;
     }
 
-    if (imgSrc) {
-      return (
-        <Image bordered rounded src={imgSrc} size="medium" style={{ maxWidth: '200px', maxHeight: '200px' }}/>
-      );
-    }
-
     return (
-      <Segment><Icon name="upload" /> Lataa kuva</Segment>
+      <Form.Field error={errors.image && true}>
+        <label>Kuva {errors.image && showError('image')}</label>
+        <label htmlFor="image" style={{ maxWidth: '200px', cursor: 'pointer' }}>
+          {imgSrc
+            ? <Image bordered rounded src={imgSrc} size="medium" style={{ maxWidth: '200px', maxHeight: '200px' }}/>
+            : <Segment><Icon name="upload" /> Lataa kuva</Segment>}
+        </label>
+        <input
+          style={{ opacity: 0, position: 'absolute', zIndex: -1 }}
+          id="image"
+          type="file"
+          name="image"
+          accept="image/*"
+          onChange={({ target }) => handleImageChange(target) } />
+        { !imgSrc ? null : <Button color="red" content="Poista kuva" icon="trash alternate" type="button"
+          style={{ marginTop: '5px', marginLeft: '10%' }} onClick={removeImage}/>}
+      </Form.Field>
     );
   };
 
@@ -188,19 +197,7 @@ const RecipeForm = (props) => {
               </Grid.Column>
 
               <Grid.Column width={6}>
-                <Form.Field error={errors.image && true}>
-                  <label>Kuva {errors.image && showError('image')}</label>
-                  <label htmlFor="image" style={{ maxWidth: '200px', cursor: 'pointer' }}>
-                    {previewImage()}
-                  </label>
-                  <input
-                    style={{ opacity: 0, position: 'absolute', zIndex: -1 }}
-                    id="image"
-                    type="file"
-                    name="image"
-                    accept="image/*"
-                    onChange={({ target }) => handleImageChange(target) } />
-                </Form.Field>
+                {imageField()}
               </Grid.Column>
             </Grid.Row>
           </Grid>
