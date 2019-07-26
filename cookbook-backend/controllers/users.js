@@ -16,6 +16,22 @@ usersRouter.get('/', async (req, res) => {
   res.json(users.map(user => user.toJSON()));
 });
 
+usersRouter.get('/:id', async (req, res, next) => {
+  try {
+    const user = await User.findById(req.params.id)
+      .populate('recipes', {
+        title: 1, category: 1, date: 1, img: 1
+      })
+      .populate('favoriteRecipes', {
+        title: 1, category: 1, date: 1, img: 1
+      });
+    if (!user) return res.status(404).end();
+    return res.json(user.toJSON());
+  } catch (error) {
+    next(error);
+  }
+});
+
 usersRouter.post('/', async (req, res, next) => {
   const { username, password } = req.body;
 
@@ -40,7 +56,7 @@ usersRouter.post('/', async (req, res, next) => {
     });
 
     const savedUser = await newUser.save();
-    res.json(savedUser);
+    res.status(201).json(savedUser);
   } catch (exception) {
     next(exception);
   }
