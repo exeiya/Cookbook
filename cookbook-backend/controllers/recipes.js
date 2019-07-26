@@ -49,6 +49,7 @@ recipesRouter.post('/', multerUploads, async (req, res, next) => {
   try {
     const decodedToken = jwt.verify(req.token, process.env.SECRET);
     const user = await User.findById(decodedToken.id);
+    if (!user) return res.status(401).end();
     let newRecipe;
     if (contentType.startsWith('multipart/form-data')) {
       const dataUri = new Datauri();

@@ -17,6 +17,10 @@ const errorHandler = (err, req, res, next) => {
   next(err);
 };
 
+const unknownEndpointHandler = (req, res) => {
+  res.status(404).json({ error: 'Unknown endpoint' });
+};
+
 const tokenExtractor = (req, res, next) => {
   const auth = req.get('authorization');
 
@@ -27,4 +31,4 @@ const tokenExtractor = (req, res, next) => {
   next();
 };
 
-module.exports = { errorHandler, tokenExtractor };
+module.exports = { errorHandler, tokenExtractor, unknownEndpointHandler };
