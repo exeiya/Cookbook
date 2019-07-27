@@ -87,6 +87,69 @@ describe('when there are some initial users saved', () => {
       const usersAtEnd = await helper.usersInDb();
       expect(usersAtEnd.length).toBe(usersAtStart.length);
     });
+
+    test('fails with status 400 when password is not given', async () => {
+      const usersAtStart = await helper.usersInDb();
+      const newUser = {
+        username: 'Uusikokki'
+      };
+
+      await api.post('/api/users')
+        .send(newUser)
+        .expect(400)
+        .expect('Content-Type', /application\/json/);
+
+      const usersAtEnd = await helper.usersInDb();
+      expect(usersAtEnd.length).toBe(usersAtStart.length);
+    });
+
+    test('fails with status 400 when username is not given', async () => {
+      const usersAtStart = await helper.usersInDb();
+      const newUser = {
+        password: 'Salasana_123'
+      };
+
+      await api.post('/api/users')
+        .send(newUser)
+        .expect(400)
+        .expect('Content-Type', /application\/json/);
+
+      const usersAtEnd = await helper.usersInDb();
+      expect(usersAtEnd.length).toBe(usersAtStart.length);
+    });
+
+    test('fails with status 400 when password does not have numeric characters', async () => {
+      const usersAtStart = await helper.usersInDb();
+      const newUser = {
+        username: 'Uusikokki',
+        password: 'Salainen_salasana'
+      };
+
+      const res = await api.post('/api/users')
+        .send(newUser)
+        .expect(400)
+        .expect('Content-Type', /application\/json/);
+
+      const usersAtEnd = await helper.usersInDb();
+      expect(usersAtEnd.length).toBe(usersAtStart.length);
+      expect(res.body.error).toContain('Password is not strong enough');
+    });
+
+    test('fails with status 400 when username has forbidden characters', async () => {
+      const usersAtStart = await helper.usersInDb();
+      const newUser = {
+        username: 'Uusikokki@%/',
+        password: 'Salasana_123'
+      };
+
+      await api.post('/api/users')
+        .send(newUser)
+        .expect(400)
+        .expect('Content-Type', /application\/json/);
+
+      const usersAtEnd = await helper.usersInDb();
+      expect(usersAtEnd.length).toBe(usersAtStart.length);
+    });
   });
 });
 

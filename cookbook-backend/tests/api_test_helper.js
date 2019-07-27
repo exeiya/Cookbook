@@ -1,5 +1,7 @@
 const Recipe = require('../models/recipe');
 const User = require('../models/user');
+const bcrypt = require('bcrypt');
+const jwt = require('jsonwebtoken');
 
 const initialRecipes = [
   {
@@ -81,11 +83,26 @@ const nonexistentUserId = async () => {
   return user._id.toString();
 };
 
+const hashPassword = async (password) => {
+  const hashedPassword = await bcrypt.hash(password, 10);
+  return hashedPassword;
+};
+
+const getLoggedUserToken = (user) => {
+  const token = jwt.sign(
+    { username: user.username, id: user.id },
+    process.env.SECRET
+  );
+  return token;
+};
+
 module.exports = {
   initialRecipes,
   recipesInDb,
   nonexistentRecipeId,
   initialUsers,
   usersInDb,
-  nonexistentUserId
+  nonexistentUserId,
+  hashPassword,
+  getLoggedUserToken
 };
