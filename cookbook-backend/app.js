@@ -31,6 +31,7 @@ mongoose.connect(config.MONGODB_URI, { useNewUrlParser: true })
 
 app.use(cors());
 app.use(bodyParser.json());
+app.use(express.static('build'));
 app.use(morgan(':method :url :status :res[content-length] :data - :date[clf] - :response-time ms'));
 app.use(middleware.tokenExtractor);
 
