@@ -24,6 +24,7 @@ const Dashboard = ({ recipes }) => {
     if (recipes.length === 0) return [];
     let newestRecipes = new Array(4);
     for (let i = 0; i < newestRecipes.length; i++) {
+      if (i === recipes.length) break;
       const recipe = recipes[recipes.length-i-1];
       newestRecipes[i] = <RecipeCard key={recipe.id} recipe={recipe} />;
     }
