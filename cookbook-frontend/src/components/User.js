@@ -11,7 +11,7 @@ const User = ({ loggedUser, user, selectedTab }) => {
   const recipeGrid = (recipes) => {
     return (
       <Grid padded columns={4}>
-        {recipes.map(recipe => RecipeCard(recipe))}
+        {recipes.map(recipe => <RecipeCard key={recipe.id} recipe={recipe} />)}
       </Grid>
     );
   };

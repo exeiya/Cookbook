@@ -6,6 +6,7 @@ import RecipeCard from '../components/RecipeCard';
 const Dashboard = ({ recipes }) => {
 
   const getRandomRecipes = () => {
+    if (recipes.length === 0) return [];
     let randomArray = [];
     for (let i = 0; i < 4; i++) {
       const random = Math.floor(Math.random() * recipes.length);
@@ -13,13 +14,18 @@ const Dashboard = ({ recipes }) => {
         randomArray.push(random);
       }
     }
-    return randomArray.map(random => RecipeCard(recipes[random]));
+
+    return randomArray.map(random =>
+      <RecipeCard key={recipes[random]['id']} recipe={recipes[random]} />
+    );
   };
 
   const getNewestRecipes = () => {
+    if (recipes.length === 0) return [];
     let newestRecipes = new Array(4);
     for (let i = 0; i < newestRecipes.length; i++) {
-      newestRecipes[i] = RecipeCard(recipes[recipes.length-i-1]);
+      const recipe = recipes[recipes.length-i-1];
+      newestRecipes[i] = <RecipeCard key={recipe.id} recipe={recipe} />;
     }
     return newestRecipes;
   };

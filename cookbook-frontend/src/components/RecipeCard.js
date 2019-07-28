@@ -3,7 +3,7 @@ import { Link } from 'react-router-dom';
 import { Grid, Card, Image } from 'semantic-ui-react';
 import picture from '../assets/default_picture.jpg';
 
-const RecipeCard = (recipe) => {
+const RecipeCard = ({ recipe }) => {
   if (!recipe) return null;
   return (
     <Grid.Column key={recipe.id}>
