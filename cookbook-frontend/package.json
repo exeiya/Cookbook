@@ -36,6 +36,9 @@
     ]
   },
   "devDependencies": {
+    "@testing-library/jest-dom": "^4.0.0",
+    "@testing-library/react": "^8.0.7",
+    "eslint-plugin-jest": "^22.14.0",
     "json-server": "^0.14.2"
   }
 }
