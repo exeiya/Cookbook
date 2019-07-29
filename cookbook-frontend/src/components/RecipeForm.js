@@ -102,7 +102,6 @@ const RecipeForm = (props) => {
         recipeData = recipe;
       }
       let submitted;
-
       // If the recipe already exists, we must include the id to update it
       if (props.values) {
         submitted = await props.onSubmit(recipeData, props.values.id);
@@ -111,7 +110,7 @@ const RecipeForm = (props) => {
       }
 
       if (submitted) {
-        props.history.push('/');
+        props.history.push(props.redirectPathOnSubmit);
       } else {
         setIsSubmitting(false);
       }

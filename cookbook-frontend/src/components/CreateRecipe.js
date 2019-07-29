@@ -17,7 +17,8 @@ const CreateRecipe = (props) => {
       </Grid.Row>
       <RecipeForm
         onSubmit={props.addRecipe}
-        submitButtonText="Lisää resepti" />
+        submitButtonText="Lisää resepti"
+        redirectPathOnSubmit="/" />
     </Grid>
   );
 };

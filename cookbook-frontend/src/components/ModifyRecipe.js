@@ -20,7 +20,8 @@ const ModifyRecipe = ({ recipe, updateRecipe, loggedUser, history }) => {
       <RecipeForm
         onSubmit={updateRecipe}
         values={recipe}
-        submitButtonText="Tallenna muutokset" />
+        submitButtonText="Tallenna muutokset"
+        redirectPathOnSubmit={`/recipes/${recipe.id}`} />
       <Grid.Row columns={1}>
         <Grid.Column>
           <div style={{ textAlign: 'center' }}>
