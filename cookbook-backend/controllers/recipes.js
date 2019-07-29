@@ -146,7 +146,8 @@ recipesRouter.patch('/:id', async (req, res, next) => {
     }
 
     const updatedRecipe = await Recipe.findByIdAndUpdate(id, { likes }, { new: true })
-      .populate('user', { username: 1 });
+      .populate('user', { username: 1 })
+      .populate('comments.user', { username: 1 });
     return res.json(updatedRecipe);
   } catch (error) {
     next(error);
