@@ -1,5 +1,4 @@
 import React, { useState } from 'react';
-import { connect } from 'react-redux';
 import shortid from 'shortid';
 import { withRouter } from 'react-router-dom';
 import { Form, Icon, Select, Input, Grid, Image, Segment, Button } from 'semantic-ui-react';
@@ -21,6 +20,7 @@ const RecipeForm = (props) => {
   );
   const [ imgFile, setImgFile ] = useState();
   const [errors, setErrors] = useState({ ingredientIds: [] });
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
   const categoryOptions = [
     { key: 'dinner', value: 'pääruoka', text: 'Pääruoka' },
@@ -92,6 +92,7 @@ const RecipeForm = (props) => {
     }
 
     if (validateFields()) {
+      setIsSubmitting(true);
       let recipeData;
       if (imgFile) {
         recipeData = new FormData();
@@ -101,6 +102,8 @@ const RecipeForm = (props) => {
         recipeData = recipe;
       }
       let submitted;
+
+      // If the recipe already exists, we must include the id to update it
       if (props.values) {
         submitted = await props.onSubmit(recipeData, props.values.id);
       } else {
@@ -109,12 +112,13 @@ const RecipeForm = (props) => {
 
       if (submitted) {
         props.history.push('/');
+      } else {
+        setIsSubmitting(false);
       }
     }
   };
 
   const handleChange = (target) => {
-    console.log(target.name);
     setValues({ ...values, [target.name]: target.value });
     setErrors({ ...errors, [target.name]: null });
   };
@@ -263,6 +267,11 @@ const RecipeForm = (props) => {
           </Form.Field>
           <div style={{ textAlign: 'center' }}>
             {props.submitButton}
+            <Button
+              positive
+              disabled={isSubmitting}
+              loading={isSubmitting}
+              content={props.submitButtonText} />
           </div>
         </Form>
       </Grid.Column>
@@ -270,4 +279,4 @@ const RecipeForm = (props) => {
   );
 };
 
-export default connect()(withRouter(RecipeForm));
+export default withRouter(RecipeForm);

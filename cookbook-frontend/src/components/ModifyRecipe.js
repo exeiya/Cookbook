@@ -20,7 +20,7 @@ const ModifyRecipe = ({ recipe, updateRecipe, loggedUser, history }) => {
       <RecipeForm
         onSubmit={updateRecipe}
         values={recipe}
-        submitButton={<Button positive>Tallenna muutokset</Button>} />
+        submitButtonText="Tallenna muutokset" />
       <Grid.Row columns={1}>
         <Grid.Column>
           <div style={{ textAlign: 'center' }}>

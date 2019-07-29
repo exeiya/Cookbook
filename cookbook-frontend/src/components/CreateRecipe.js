@@ -1,6 +1,6 @@
 import React from 'react';
 import { connect } from 'react-redux';
-import { Grid, Button } from 'semantic-ui-react';
+import { Grid } from 'semantic-ui-react';
 import RecipeForm from './RecipeForm';
 import { addRecipe } from '../reducers/recipeReducer';
 
@@ -17,7 +17,7 @@ const CreateRecipe = (props) => {
       </Grid.Row>
       <RecipeForm
         onSubmit={props.addRecipe}
-        submitButton={<Button positive>Lisää resepti</Button>} />
+        submitButtonText="Lisää resepti" />
     </Grid>
   );
 };
