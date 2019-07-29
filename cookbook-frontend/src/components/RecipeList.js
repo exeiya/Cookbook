@@ -28,6 +28,10 @@ const RecipeList = ({ history, recipes, loggedUser }) => {
       recipes.sort((a, b) => {
         return b.likes - a.likes;
       });
+    } else if (sortBy === 'newest') {
+      recipes.sort((a, b) => {
+        return b.date - a.date;
+      });
     }
 
     return recipes;
@@ -91,6 +95,11 @@ const RecipeList = ({ history, recipes, loggedUser }) => {
       key: 'likes',
       text: 'Eniten tykkäyksiä',
       value: 'likes',
+    },
+    {
+      key: 'newest',
+      text: 'Viimeksi lisätyt',
+      value: 'newest',
     }
   ];
 
