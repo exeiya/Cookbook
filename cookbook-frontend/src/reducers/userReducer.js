@@ -8,6 +8,20 @@ const userReducer = (state = [], action) => {
       return [...state, action.data];
     case 'UPDATE_USER':
       return state.map(u => u.id !== action.data.id ? u : action.data);
+    case 'ADD_RECIPE': {
+      const user = state.find(u => u.id === action.data.user.id);
+      if (!user) return state;
+      const { id, title, category, date, img } = action.data;
+      const recipes = user.recipes.concat({ id, title, category, date, img });
+      return state.map(u => u.id !== user.id ? u : { ...user, recipes });
+    }
+    case 'UPDATE_RECIPE': {
+      const user = state.find(u => u.id === action.data.user.id);
+      if (!user) return state;
+      const { id, title, category, date, img } = action.data;
+      const recipes = user.recipes.map(r => r.id !== id ? r : { id, title, category, date, img });
+      return state.map(u => u.id !== user.id ? u : { ...user, recipes });
+    }
     default:
       return state;
   }
