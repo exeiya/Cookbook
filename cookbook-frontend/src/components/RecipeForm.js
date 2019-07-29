@@ -25,7 +25,8 @@ const RecipeForm = (props) => {
   const categoryOptions = [
     { key: 'dinner', value: 'pääruoka', text: 'Pääruoka' },
     { key: 'dessert', value: 'jälkiruoka', text: 'Jälkiruoka' },
-    { key: 'salad', value: 'salaatti', text: 'Salaatti' }
+    { key: 'salad', value: 'salaatti', text: 'Salaatti' },
+    { key: 'other', value: 'muu', text: 'Muu' }
   ];
 
   const cookingTimeOptions = [

@@ -34,7 +34,7 @@ const recipeSchema = new mongoose.Schema({
   },
   category: {
     type: String,
-    enum: ['pääruoka', 'jälkiruoka', 'salaatti'],
+    enum: ['pääruoka', 'jälkiruoka', 'salaatti', 'muu'],
     required: true
   },
   servings: Number,
