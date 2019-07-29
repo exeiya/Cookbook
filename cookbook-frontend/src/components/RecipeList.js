@@ -30,7 +30,7 @@ const RecipeList = ({ history, recipes, loggedUser }) => {
       });
     } else if (sortBy === 'newest') {
       recipes.sort((a, b) => {
-        return b.date - a.date;
+        return new Date(b.date) - new Date(a.date);
       });
     }
 
