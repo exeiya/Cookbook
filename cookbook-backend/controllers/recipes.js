@@ -173,7 +173,9 @@ recipesRouter.post('/:id/comments', async (req, res, next) => {
     const commentedRecipe = await Recipe.findById(id);
     commentedRecipe.comments = commentedRecipe.comments.concat(newComment);
     await commentedRecipe.save();
-    await commentedRecipe.populate('comments.user', { username: 1 }).execPopulate();
+    await commentedRecipe
+      .populate('user', { username: 1 })
+      .populate('comments.user', { username: 1 }).execPopulate();
 
     return res.json(commentedRecipe);
   } catch (error) {
@@ -260,7 +262,10 @@ recipesRouter.put('/:id', multerUploads, async (req, res, next) => {
 
       const updatedRecipe = await Recipe.findByIdAndUpdate(recipe._id,
         newRecipe, { runValidators: true, new: true });
-      await updatedRecipe.populate('user', { username: 1 }).execPopulate();
+      await updatedRecipe
+        .populate('user', { username: 1 })
+        .populate('comments.user', { username: 1 })
+        .execPopulate();
 
       return res.json(updatedRecipe);
     }
