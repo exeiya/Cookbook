@@ -72,17 +72,25 @@ const User = ({ loggedUser, user, selectedTab, removeUser, history, notify }) =>
     </Modal>
   );
 
+  const showRemoveButton = () => {
+    if (user && loggedUser && loggedUser.id === user.id) {
+      return (
+        <Button
+          icon="user delete"
+          color="red"
+          labelPosition="left"
+          content="Poista käyttäjätili"
+          style={{ marginBottom: '-100px', float: 'right' }} 
+          onClick={() => setShowRemoveModal(true)}/>
+      );
+    }
+  };
+
   return (
     <>
       {removeUserModal()}
       <h2>{user.username}</h2>
-      <Button
-        icon="user delete"
-        color="red"
-        labelPosition="left"
-        content="Poista käyttäjätili"
-        style={{ marginBottom: '-100px', float: 'right' }} 
-        onClick={() => setShowRemoveModal(true)}/>
+      {showRemoveButton()}
       <Tab panes={panesToShow} defaultActiveIndex={selectedTab ? Number(selectedTab.tab) || 0 : 0} />
     </>
   );
