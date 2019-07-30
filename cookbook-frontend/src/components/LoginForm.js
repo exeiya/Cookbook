@@ -34,13 +34,14 @@ const LoginForm = (props) => {
         props.notify(`Tervetuloa ${username}!`, 'success');
       } catch (error) {
         console.log(error);
-        setError('Wrong username or password');
+        setError('Väärä käyttäjätunnus tai salasana');
       }
     }
   };
 
   const onSignupClick = () => () => {
     props.closeLoginModal();
+    setError('');
     props.history.push('/signup');
   };
 
