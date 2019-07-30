@@ -57,7 +57,7 @@ const RecipeList = ({ history, recipes, loggedUser }) => {
         </div>
         <Image src={(recipe.img && recipe.img.url) ? recipe.img.url : picture} style={{ maxHeight: '200px' }} />
         <Card.Content>
-          <Card.Header>
+          <Card.Header data-cy="recipe-card-header">
             {recipe.title}
           </Card.Header>
         </Card.Content>
@@ -80,7 +80,9 @@ const RecipeList = ({ history, recipes, loggedUser }) => {
         </Button>
       </Grid.Column>
       <Grid.Column width={3}>
-        <Button as={Link} to="/recipes/create" color="green"><Icon name="plus"/>Luo uusi resepti</Button>
+        <Button as={Link} to="/recipes/create" color="green" data-cy="create-recipe-button">
+          <Icon name="plus"/>Luo uusi resepti
+        </Button>
       </Grid.Column>
     </Grid.Row>
   );

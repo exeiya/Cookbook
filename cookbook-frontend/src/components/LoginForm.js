@@ -50,7 +50,7 @@ const LoginForm = (props) => {
       props.closeLoginModal();
       setError(''); }
     }>
-      <div style={{ padding: '40px' }}>
+      <div style={{ padding: '40px' }} data-cy="login-form" >
         <div style={{ textAlign: 'center', paddingBottom: '20px' }}>
           <h2>Kirjaudu sisään</h2>
         </div>
@@ -60,9 +60,11 @@ const LoginForm = (props) => {
             <label>Käyttäjätunnus</label>
             <Form.Input
               placeholder="Kirjoita käyttäjätunnus"
+              type="text"
               icon="user"
               iconPosition="left"
-              onChange={({ target }) => setUsername(target.value)}/>
+              onChange={({ target }) => setUsername(target.value)}
+              data-cy="login-username" />
           </Form.Field>
           <Form.Field >
             <label>Salasana</label>
@@ -71,10 +73,11 @@ const LoginForm = (props) => {
               type="password"
               icon="lock"
               iconPosition="left"
-              onChange={({ target }) => setPassword(target.value)} />
+              onChange={({ target }) => setPassword(target.value)}
+              data-cy="login-password" />
           </Form.Field>
           <div style={{ textAlign: 'center', padding: '10px' }}>
-            <Button positive>Kirjaudu sisään</Button>
+            <Button positive data-cy="login-submit">Kirjaudu sisään</Button>
           </div>
         </Form>
         <Divider />

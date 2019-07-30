@@ -104,7 +104,7 @@ const Recipe = (props) => {
         </Grid.Column>
         <Grid.Column verticalAlign="bottom">
           <Button as="div" labelPosition="left">
-            <Label as="a" basic color="red" pointing="right">
+            <Label as="a" basic color="red" pointing="right" data-cy="recipe-likes">
               <Icon name="heart" /> {recipe.likes || 0}
             </Label>
             <Button color="red" name="like" onClick={handleClick()}>Tykkää</Button>

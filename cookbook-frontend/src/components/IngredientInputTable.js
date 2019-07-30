@@ -43,6 +43,7 @@ const IngredientInputTable = ({ ingredients, setIngredients, errors, setErrors }
               name={ingredient.id}
               onChange={handleIngredientChange('name')}
               placeholder="Ainesosan nimi"
+              data-cy="ingredient-name-field"
             />
           </Form.Field>
         </td>
@@ -53,6 +54,7 @@ const IngredientInputTable = ({ ingredients, setIngredients, errors, setErrors }
               name={ingredient.id}
               onChange={handleIngredientChange('amount')}
               placeholder="Ainesosan määrä"
+              data-cy="ingredient-amount-field"
             />
           </Form.Field>
         </td>
@@ -76,7 +78,8 @@ const IngredientInputTable = ({ ingredients, setIngredients, errors, setErrors }
       </table>
       {errors.ingredients && <div style={{ paddingBottom: '10px' }}>
         <Icon color="yellow" name="exclamation triangle" /> {errors.ingredients}</div>}
-      <Button type="button" onClick={addIngredient} color="teal" style={{ marginBottom: '10px' }}>Lisää uusi ainesosa</Button>
+      <Button type="button" onClick={addIngredient} color="teal" style={{ marginBottom: '10px' }}
+        data-cy="ingredient-add-button">Lisää uusi ainesosa</Button>
     </Form.Group>
   );
 };
