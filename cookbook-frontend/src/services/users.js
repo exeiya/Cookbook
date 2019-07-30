@@ -23,4 +23,10 @@ const updateFavoriteRecipes = async (id, recipeId) => {
   return res.data;
 };
 
-export default { getAll, create, updateFavoriteRecipes, setToken };
+const removeId = async(userId) => {
+  const config = { headers: { Authorization: token } };
+  const res = await axios.delete(`${baseUrl}/${userId}`, config);
+  return res.data;
+};
+
+export default { getAll, create, updateFavoriteRecipes, setToken, removeId };

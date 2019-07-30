@@ -97,4 +97,21 @@ usersRouter.patch('/:id', async (req, res, next) => {
   }
 });
 
+usersRouter.delete('/:id', async (req, res, next) => {
+  try {
+    const userToken = jwt.verify(req.token, process.env.SECRET);
+    const user = await User.findById(userToken.id);
+
+    if(!user || userToken.id !== req.params.id) {
+      return res.status(403).end();
+    }
+
+    await User.findByIdAndRemove(req.params.id);
+
+    return res.status(204).end();
+  } catch (error) {
+    next(error);
+  }
+});
+
 module.exports = usersRouter;

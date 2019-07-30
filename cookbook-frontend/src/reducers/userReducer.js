@@ -1,4 +1,5 @@
 import userService from '../services/users';
+import { logout } from './loginReducer';
 
 const userReducer = (state = [], action) => {
   switch (action.type) {
@@ -22,6 +23,8 @@ const userReducer = (state = [], action) => {
       const recipes = user.recipes.map(r => r.id !== id ? r : { id, title, category, date, img });
       return state.map(u => u.id !== user.id ? u : { ...user, recipes });
     }
+    case 'REMOVE_USER':
+      return state.filter(u => u.id !== action.data.id);
     default:
       return state;
   }
@@ -48,6 +51,15 @@ export const favoriteRecipe = (id, recipe) => async (dispatch) => {
   dispatch({
     type: 'UPDATE_USER',
     data: updatedUser
+  });
+};
+
+export const removeUser = (id) => async (dispatch) => {
+  await userService.removeId(id);
+  dispatch(logout());
+  dispatch({
+    type: 'REMOVE_USER',
+    data: { id }
   });
 };
 
